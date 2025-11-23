@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { LOGIN, UNAUTHORIZED } from './router';
+import { LOGIN, UNAUTHORIZED } from './routes/commonRoutes';
 
 const ProtectedRoute = ({ role, children }) => {
   const token = localStorage.getItem('auth_token');

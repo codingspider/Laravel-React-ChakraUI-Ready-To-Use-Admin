@@ -20,11 +20,10 @@ import {
 
 import { Link as ReactRouterLink } from 'react-router-dom';
 import { Link as ChakraLink } from '@chakra-ui/react';
-import { FORGOT } from '../../router';
 import { loginUser } from '../../services/authService';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { SUPER_ADMIN_BASE, ADMIN_BASE, USER_BASE, STAFF_BASE, DASHBOARD } from '../../router';
+import { ADMIN_BASE, DASHBOARD, FORGOT, STAFF_BASE, SUPER_ADMIN_BASE, USER_BASE } from '../../routes/commonRoutes';
 
 export default function Login() {
   const [show, setShow] = useState(false);

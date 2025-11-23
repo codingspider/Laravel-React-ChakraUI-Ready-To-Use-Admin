@@ -1,6 +1,6 @@
 import api from "../axios";
 import Swal from 'sweetalert2';
-import { LOGIN } from "../router";
+import { LOGIN } from "../routes/commonRoutes";
 
 export const loginUser = async (email, password) => {
   const response = await api.post(`/login`, {

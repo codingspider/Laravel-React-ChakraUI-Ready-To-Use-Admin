@@ -17,7 +17,8 @@ import {
 import { useForm } from "react-hook-form";
 import { resettPassword } from '../../services/authService';
 import { useParams, useNavigate } from 'react-router-dom';
-import { LOGIN } from '../../router';
+import { LOGIN } from '../../routes/commonRoutes';
+
 
 
 export default function ResetPassword() {
