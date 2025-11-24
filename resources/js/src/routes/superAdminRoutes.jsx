@@ -4,10 +4,14 @@ import MasterSetting from "../components/superadmin/MasterSetting";
 import SaveOrder from "../components/order/SaveOrder";
 import UserList from "../components/user/UserList";
 import UserCreate from "../components/user/UserCreate";
+
 import PlanList from "../components/superadmin/plan/PlanList";
+import PlanCreate from "../components/superadmin/plan/PlanCreate";
+import PlanEdit from "../components/superadmin/plan/PlanEdit";
 
 import { DASHBOARD, SUPER_ADMIN_BASE } from "./commonRoutes";
 
+export const DASHBOARD_PATH = `${SUPER_ADMIN_BASE}/dashboard`;
 
 export const USER_LIST = "user/list";
 export const USER_ADD = "user/create";
@@ -34,4 +38,6 @@ export const superAdminRoutes = [
     { path: USER_ADD_PATH, element: <ProtectedRoute role="superadmin"><UserCreate /></ProtectedRoute> },
 
     { path: PLAN_LIST_PATH, element: <ProtectedRoute role="superadmin"><PlanList /></ProtectedRoute> },
+    { path: PLAN_ADD_PATH, element: <ProtectedRoute role="superadmin"><PlanCreate /></ProtectedRoute> },
+    { path: PLAN_EDIT, element: <ProtectedRoute role="superadmin"><PlanEdit /></ProtectedRoute> },
 ];

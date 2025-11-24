@@ -91,5 +91,16 @@ return [
     'customers' => 'Customers',
     'user_list' => 'User List',
     'subscription_plan' => 'Subscription Plan',
+    'add' => 'Add Data',
+    'list' => 'List Data',
+    'price' => 'Price',
+    'active' => 'Active',
+    'inactive' => 'Inactive',
+    'billing_cycle' => 'Billing Cycle',
+    'monthly' => 'Monthly',
+    'yearly' => 'Yearly',
+    'branch_limit' => 'Branch Limit',
+    'user_limit' => 'User Limit',
+    'invoice_limit' => 'Invoice Limit',
 
 ];

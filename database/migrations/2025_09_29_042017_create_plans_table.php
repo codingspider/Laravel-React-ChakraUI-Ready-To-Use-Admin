@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->decimal('price', 15, 2)->default(0);
+            $table->enum('billing_cycle', ['monthly', 'yearly'])->default('monthly');
+            $table->integer('branch_limit')->default(1);
+            $table->integer('user_limit')->default(1000);
+            $table->integer('invoice_limit')->default(1000);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
