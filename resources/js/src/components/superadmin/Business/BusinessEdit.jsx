@@ -22,23 +22,24 @@ import {
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link as ReactRouterLink } from "react-router-dom";
 import api from "../../../axios";
 import { DASHBOARD_PATH, PLAN_LIST_PATH } from "../../../routes/superAdminRoutes";
-import { STORE_PLAN } from "../../../routes/apiRoutes";
+import { GET_EDIT_PLAN, UPDATE_PLAN } from "../../../routes/apiRoutes";
 
-const PlanCreate = () => {
+const BusinessEdit = () => {
     const { register, handleSubmit, reset } = useForm();
     const { t } = useTranslation();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const toast = useToast();
     const navigate = useNavigate();
+    const { id } = useParams();
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         try {
-            const res = await api.post(STORE_PLAN, data);
+            const res = await api.put(UPDATE_PLAN(id), data);
             reset();
             toast({
                 position: "bottom-right",
@@ -77,9 +78,24 @@ const PlanCreate = () => {
         }
     };
 
+    const getEditPlan = async () => {
+        const res = await api.get(GET_EDIT_PLAN(id));
+        const plan = res.data.data;
+        reset({
+            name: plan.name,
+            price: plan.price,
+            is_active: plan.is_active,
+            billing_cycle: plan.billing_cycle,
+            branch_limit: plan.branch_limit,
+            user_limit: plan.user_limit,
+            invoice_limit: plan.invoice_limit,
+        });
+    };
+
     useEffect(() => {
         const app_name = localStorage.getItem("app_name");
-        document.title = `${app_name} | Plan Management`;
+        document.title = `${app_name} | Plan Edit`;
+        getEditPlan();
     }, []);
 
     return (
@@ -236,4 +252,4 @@ const PlanCreate = () => {
     );
 };
 
-export default PlanCreate;
+export default BusinessEdit;

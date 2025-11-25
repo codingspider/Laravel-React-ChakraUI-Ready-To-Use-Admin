@@ -50,9 +50,9 @@ export default function Login() {
 
   const onSubmit = async (data) => {
         setIsSubmitting(true);
-        const { email, password } = data;
+        const { login, password } = data;
         try {
-            const res = await loginUser(email, password);
+            const res = await loginUser(login, password);
             localStorage.setItem('auth_token', res.data.token);
             localStorage.setItem('role', res.data.role);
             toast({
@@ -105,8 +105,8 @@ export default function Login() {
           p={8}>
           <Stack spacing={4}>
             <FormControl id="email">
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" {...register("email", { required: true })} />
+              <FormLabel>Email or Username </FormLabel>
+              <Input type="text" {...register("login", { required: true })} />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>

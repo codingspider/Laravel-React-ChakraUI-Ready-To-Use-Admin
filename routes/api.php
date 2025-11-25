@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\PLanController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\GeneralController;
+use App\Http\Controllers\API\BusinessController;
 use App\Http\Controllers\API\RegisterController;
 
 
@@ -20,6 +22,16 @@ Route::middleware(['auth:sanctum'])->prefix('superadmin')->group(function () {
     Route::get('users', [UserController::class, 'index']);
     Route::post('user/store', [UserController::class, 'store']);
     Route::resource('plans', PLanController::class);
+    Route::resource('business', BusinessController::class);
+
+    Route::get('get/currencies', [GeneralController::class, 'getCurrency']);
+    Route::get('get/timezones', [GeneralController::class, 'getTimezone']);
+    Route::get('get/all/plans', [GeneralController::class, 'getAllPlan']);
+});
+
+Route::middleware(['auth:sanctum', 'check_active_business'])->prefix('admin')->group(function () {
+    // Add more admin routes here
+
 });
 
 

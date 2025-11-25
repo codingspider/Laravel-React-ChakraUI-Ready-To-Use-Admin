@@ -30,7 +30,7 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { PLAN_LIST_PATH, USER_LIST_PATH } from "../../routes/superAdminRoutes";
+import { BUSINESS_ADD_PATH, BUSINESS_EDIT_PATH, BUSINESS_LIST_PATH, PLAN_LIST_PATH, USER_LIST_PATH } from "../../routes/superAdminRoutes";
 
 
 const SidebarContent = ({ onClose, ...rest }) => {
@@ -101,13 +101,13 @@ const SidebarContent = ({ onClose, ...rest }) => {
                 label={t("subscription_plan")}
             />
             <NavLink
-                to="/super/admin/pos"
+                to={BUSINESS_LIST_PATH}
                 icon={FcShop}
                 activeBg={activeBg}
                 activeColor={activeColor}
                 hoverBg={hoverBg}
-                active={isActive("/super/admin/pos")}
-                label={t("pos")}
+                active={isActive(BUSINESS_LIST_PATH)}
+                label={t("business")}
             />
             <NavLink
                 to="/super/admin/save/order"

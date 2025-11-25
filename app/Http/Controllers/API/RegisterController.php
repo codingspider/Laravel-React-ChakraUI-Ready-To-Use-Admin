@@ -47,8 +47,18 @@ class RegisterController extends BaseController
      */
     public function login(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+        $login_type = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $credentials = [
+            $login_type => $request->login,
+            'password' => $request->password,
+        ];
+
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user(); 
+            if($user->allow_login != 1){
+                Auth::logout();
+                return $this->sendError('Account is disabled.');
+            }
             $success['token'] =  $user->createToken('MyApp')->plainTextToken; 
             $success['name'] =  $user->name;
             $success['role'] =  $user->role;
@@ -59,7 +69,7 @@ class RegisterController extends BaseController
             return $this->sendResponse($success, 'User login successfully.');
         } 
         else{ 
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+            return $this->sendError('These credentials do not match our records.');
         } 
     }
     

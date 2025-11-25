@@ -17,19 +17,26 @@ class UserSeeder extends Seeder
         $users = [
             [
                 'name' => 'Super Admin',
+                'username' => 'superadmin',
+                'user_type' => 'superadmin',
+                'role' => 'superadmin',
                 'email' => 'superadmin@gmail.com',
                 'email_verified_at' => now(),
                 'last_login_at' => now(),
-                'password' => Hash::make('123456789'), // Change this to a secure password
-                'role' => 'superadmin',
+                'password' => Hash::make('123456789'),
+                'allow_login' => 1
+                
             ],
             [
                 'name' => 'Admin User',
+                'username' => 'admin',
+                'user_type' => 'admin',
                 'email' => 'admin@gmail.com',
                 'email_verified_at' => now(),
                 'last_login_at' => now(),
-                'password' => Hash::make('123456789'), // Change this to a secure password
+                'password' => Hash::make('123456789'),
                 'role' => 'admin',
+                'allow_login' => 1
             ],
         ];
 
