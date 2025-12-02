@@ -13,19 +13,15 @@ import {
 } from "@chakra-ui/react";
 import { Link as ChakraLink } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import Swal from "sweetalert2";
 import { Link as ReactRouterLink } from "react-router-dom";
 import api from "../../../axios";
-import { PLAN_ADD_PATH, PLAN_EDIT_PATH, SUPERADMIN_DASHBOARD_PATH } from "../../../routes/superAdminRoutes";
 import TanStackTable from "../../../TanStackTable";
-import { LIST_PLAN } from "../../../routes/apiRoutes";
-import { useCurrencyFormatter } from './../../../useCurrencyFormatter';
-import { DELETE_PLAN } from "../../../routes/apiRoutes";
+import { ADMIN_DASHBOARD_PATH, BRANCH_ADD_PATH, BRANCH_EDIT_PATH } from "../../../routes/adminRoutes";
+import { DELETE_BRANCH, LIST_BRANCH } from "../../../routes/apiRoutes";
 
-
-export default function PlanList() {
+export default function BranchList() {
     const [data, setData] = useState([]);
     const [globalFilter, setGlobalFilter] = useState("");
     const [pageIndex, setPageIndex] = useState(0);
@@ -35,13 +31,13 @@ export default function PlanList() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const toast = useToast();
-    const { formatAmount, currency } = useCurrencyFormatter();
 
     // Fetch data whenever page or search changes
-    const fetchPlans = async () => {
+    const fetchIngredients = async () => {
         try {
             setIsLoading(true);
-            const res = await api.get(LIST_PLAN, {
+            // Browser online: request server data with pagination & filter
+            const res = await api.get(LIST_BRANCH, {
                 params: {
                     page: pageIndex + 1,
                     per_page: pageSize,
@@ -49,26 +45,25 @@ export default function PlanList() {
                 },
             });
 
-            const bottles = res.data?.data?.data || [];
-            const total = res.data?.data?.total || bottles.length;
+            const ingredients = res.data?.data?.data || [];
+            const total = res.data?.data?.total || ingredients.length;
 
             // Update table
-            setData(bottles);
+            setData(ingredients);
             setPageCount(Math.ceil(total / pageSize));
         } catch (err) {
-            console.error("fetchPlans error:", err);
+            console.error("fetchIngredients error:", err);
         } finally {
             setIsLoading(false);
         }
     };
-
     useEffect(() => {
         const app_name = localStorage.getItem('app_name');
-        document.title = `${app_name} | Plan Management`;
-        fetchPlans();
+        document.title = `${app_name} | Ingredient List`;
+        fetchIngredients();
     }, [pageIndex, globalFilter]);
 
-    const deletePlan = async (id) => {
+    const deleteBranch = async (id) => {
         const result = await Swal.fire({
             title: "Are you sure?",
             text: "Data will be deleted.",
@@ -81,7 +76,7 @@ export default function PlanList() {
 
         if (result.isConfirmed) {
             try {
-                await api.delete(DELETE_PLAN(id));
+                await api.delete(DELETE_BRANCH(id));
                 toast({
                     position: "bottom-right",
                     title: "Data deleted successfully",
@@ -90,8 +85,9 @@ export default function PlanList() {
                     isClosable: true,
                 });
 
-                fetchPlans();
+                fetchIngredients();
             } catch (error) {
+                console.log(error);
                 toast({
                     position: "bottom-right",
                     title: "Error deleting data",
@@ -105,14 +101,11 @@ export default function PlanList() {
             }
         }
     };
-
     const columns = [
         { header: t("sl"), cell: ({ row }) => row.index + 1},
-        { header: t('name'), accessorKey: "name"},
-        { header: t("price"), accessorFn: row => formatAmount(row.price)},
-        { header: t('billing_cycle'), accessorKey: "billing_cycle"},
-        { header: t('user_limit'), accessorKey: "user_limit"},
-        { header: t('invoice_limit'), accessorKey: "invoice_limit"},
+        { header: "Name", accessorKey: "name"},
+        { header: "Area", accessorKey: "area"},
+        { header: "Address", accessorKey: "address"},
         { header: t('status'), accessorFn: row => row.is_active == 1 ? 'Active' : 'Inactive' || ""},
         {
             header: "Actions",
@@ -124,7 +117,7 @@ export default function PlanList() {
                             padding={2}
                             borderRadius="md"
                             onClick={() =>
-                                navigate(PLAN_EDIT_PATH(row.original.id))
+                                navigate(BRANCH_EDIT_PATH(row.original.id))
                             }
                         >
                             <EditIcon />
@@ -135,7 +128,7 @@ export default function PlanList() {
                             padding={2}
                             borderRadius="md"
                             cursor="pointer"
-                            onClick={() => deletePlan(row.original.id)}
+                            onClick={() => deleteBranch(row.original.id)}
                         >
                             <DeleteIcon color="red.500" />
                         </ChakraLink>
@@ -154,7 +147,7 @@ export default function PlanList() {
                         <BreadcrumbItem>
                             <BreadcrumbLink
                                 as={ReactRouterLink}
-                                to={SUPERADMIN_DASHBOARD_PATH}
+                                to={ADMIN_DASHBOARD_PATH}
                             >
                                 {t("dashboard")}
                             </BreadcrumbLink>
@@ -162,7 +155,7 @@ export default function PlanList() {
                         <BreadcrumbItem isCurrentPage>
                             <BreadcrumbLink
                                 as={ReactRouterLink}
-                                to={PLAN_ADD_PATH}
+                                to={BRANCH_ADD_PATH}
                             >
                                 {t("add")}
                             </BreadcrumbLink>
@@ -184,7 +177,7 @@ export default function PlanList() {
                             setPageIndex={setPageIndex}
                             pageCount={pageCount}
                             isLoading={isLoading}
-                            addURL={PLAN_ADD_PATH}
+                            addURL={BRANCH_ADD_PATH}
                         />
                     </CardBody>
                 </Card>

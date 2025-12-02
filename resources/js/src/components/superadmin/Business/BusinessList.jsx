@@ -18,7 +18,7 @@ import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import Swal from "sweetalert2";
 import { Link as ReactRouterLink } from "react-router-dom";
 import api from "../../../axios";
-import { DASHBOARD_PATH, BUSINESS_ADD_PATH } from "../../../routes/superAdminRoutes";
+import { BUSINESS_ADD_PATH, SUPERADMIN_DASHBOARD_PATH } from "../../../routes/superAdminRoutes";
 import TanStackTable from "../../../TanStackTable";
 import { LIST_BUSINESS } from "../../../routes/apiRoutes";
 import { useCurrencyFormatter } from '../../../useCurrencyFormatter';
@@ -110,10 +110,10 @@ export default function BusinessList() {
     const columns = [
         { header: t("sl"), cell: ({ row }) => row.index + 1},
         { header: t('name'), accessorKey: "name"},
-        { header: t("price"), accessorFn: row => formatAmount(row.price)},
-        { header: t('billing_cycle'), accessorKey: "billing_cycle"},
-        { header: t('user_limit'), accessorKey: "user_limit"},
-        { header: t('invoice_limit'), accessorKey: "invoice_limit"},
+        { header: t("start_date"), accessorKey: "start_date"},
+        { header: t('country'), accessorKey: "country"},
+        { header: t('state'), accessorKey: "state"},
+        { header: t('address'), accessorKey: "landmark"},
         { header: t('status'), accessorFn: row => row.is_active == 1 ? 'Active' : 'Inactive' || ""},
         {
             header: "Actions",
@@ -155,7 +155,7 @@ export default function BusinessList() {
                         <BreadcrumbItem>
                             <BreadcrumbLink
                                 as={ReactRouterLink}
-                                to={DASHBOARD_PATH}
+                                to={SUPERADMIN_DASHBOARD_PATH}
                             >
                                 {t("dashboard")}
                             </BreadcrumbLink>

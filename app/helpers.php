@@ -543,26 +543,52 @@ function getTimeZones(){
     );
 }
 
-    function generateInvoiceNumber()
-    {
-        $date = date('Ymd');
-        $prefix = "INV-$date";
+function generateInvoiceNumber()
+{
+    $date = date('Ymd');
+    $prefix = "INV-$date";
 
-        // Get last invoice number
-        $last = \DB::table('transactions')->orderBy('id', 'DESC')->value('invoice_no');
-        if ($last) {
-            $num = (int) substr($last, -5);
-            $num++;
-        } else {
-            $num = 1;
-        }
-
-        return $prefix . '-' . str_pad($num, 5, '0', STR_PAD_LEFT);
+    // Get last invoice number
+    $last = \DB::table('transactions')->orderBy('id', 'DESC')->value('invoice_no');
+    if ($last) {
+        $num = (int) substr($last, -5);
+        $num++;
+    } else {
+        $num = 1;
     }
 
-    function generatePaymentRef()
-    {
-        $date = date('Ymd');
-        $random = rand(100000, 999999);
-        return "SP-$date-$random";
+    return $prefix . '-' . str_pad($num, 5, '0', STR_PAD_LEFT);
+}
+
+function generatePaymentRef()
+{
+    $date = date('Ymd');
+    $random = rand(100000, 999999);
+    return "SP-$date-$random";
+}
+
+function uploadImage($file, $folder = 'uploads', $oldFile = null)
+{
+    if (!$file) {
+        return $oldFile;
     }
+
+    // Delete old file if exists
+    if ($oldFile && file_exists(public_path($oldFile))) {
+        unlink(public_path($oldFile));
+    }
+
+    // Create folder if not exists
+    $uploadPath = public_path($folder);
+    if (!file_exists($uploadPath)) {
+        mkdir($uploadPath, 0777, true);
+    }
+
+    // Generate unique name
+    $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+    // Move file
+    $file->move($uploadPath, $filename);
+
+    return $folder . '/' . $filename;
+}

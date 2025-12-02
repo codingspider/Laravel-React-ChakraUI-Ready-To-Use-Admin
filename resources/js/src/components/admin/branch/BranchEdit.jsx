@@ -21,25 +21,92 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Link as ReactRouterLink } from "react-router-dom";
+import { ADMIN_DASHBOARD_PATH, BRANCH_LIST_PATH } from "../../../routes/adminRoutes";
+import { useGoogleMaps } from './../../../useGoogleMaps';
+import { GET_EDIT_BRANCH, STORE_BRANCH, UPDATE_BRANCH } from "../../../routes/apiRoutes";
 import api from "../../../axios";
-import { PLAN_LIST_PATH, SUPERADMIN_DASHBOARD_PATH } from "../../../routes/superAdminRoutes";
-import { GET_EDIT_PLAN, UPDATE_PLAN } from "../../../routes/apiRoutes";
 
-const PlanEdit = () => {
-    const { register, handleSubmit, reset } = useForm();
+const BranchEdit = () => {
+    const { register, handleSubmit, reset, setValue } = useForm();
     const { t } = useTranslation();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const toast = useToast();
     const navigate = useNavigate();
+    const [show, setShow] = useState(false);
+    const [branch, setBranch] = useState();
+    const handleClick = () => setShow(!show);
     const { id } = useParams();
+    // maps 
+    const mapRef = useRef(null);
+    const [marker, setMarker] = useState(null);
+    const autocompleteRef = useRef(null);
+    const [map, setMap] = useState(null);
+    const map_api_key = localStorage.getItem("map_api_key");
+    const googleMapsPromise = useGoogleMaps(map_api_key);
+    const geocoderRef = useRef(null);
+
+    function initMap() {
+        const coords = "23.8103, 90.4125";
+        let mapInstance = null;
+
+        // Initialize map
+        if (coords) {
+            const [latStr, lonStr] = coords.split(",");
+            mapInstance = new google.maps.Map(mapRef.current, {
+                center: { lat: parseFloat(latStr), lng: parseFloat(lonStr) },
+                zoom: 13,
+            });
+        } else {
+            mapInstance = new google.maps.Map(mapRef.current, {
+                center: { lat: 0, lng: 0 },
+                zoom: 2,
+            });
+        }
+
+        setMap(mapInstance);
+
+        // Marker (not draggable)
+        const marker = new google.maps.Marker({
+            map: mapInstance,
+            draggable: false,
+        });
+        setMarker(marker);
+
+        // Move marker to initial location if coords exist
+        if (branch) {
+            marker.setPosition({
+                lat: parseFloat(branch.lat),
+                lng: parseFloat(branch.long),
+            });
+        }
+
+        // Autocomplete
+        const input = document.querySelector('input[name="area"]');
+        const autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo("bounds", mapInstance);
+
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) return;
+
+            mapInstance.setCenter(place.geometry.location);
+            mapInstance.setZoom(15);
+            marker.setPosition(place.geometry.location);
+
+            setValue("lat", place.geometry.location.lat());
+            setValue("long", place.geometry.location.lng());
+        });
+
+        autocompleteRef.current = autocomplete;
+    }
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         try {
-            const res = await api.put(UPDATE_PLAN(id), data);
+            const res = await api.put(UPDATE_BRANCH(id), data);
             reset();
             toast({
                 position: "bottom-right",
@@ -48,7 +115,7 @@ const PlanEdit = () => {
                 duration: 3000,
                 isClosable: true,
             });
-            navigate(`${PLAN_LIST_PATH}`);
+            navigate(`${BRANCH_LIST_PATH}`);
         } catch (err) {
             const errorResponse = err?.response?.data;
             if (errorResponse?.errors) {
@@ -78,25 +145,29 @@ const PlanEdit = () => {
         }
     };
 
-    const getEditPlan = async () => {
-        const res = await api.get(GET_EDIT_PLAN(id));
-        const plan = res.data.data;
+    const getBranch = async () => {
+        const res = await api.get(GET_EDIT_BRANCH(id));
+        const branch = res.data.data;
+        setBranch(branch);
         reset({
-            name: plan.name,
-            price: plan.price,
-            is_active: plan.is_active,
-            billing_cycle: plan.billing_cycle,
-            branch_limit: plan.branch_limit,
-            user_limit: plan.user_limit,
-            invoice_limit: plan.invoice_limit,
+          name: branch.name,
+          area: branch.area,
+          address: branch.address,
+          phone: branch.phone,
+          is_active: branch.is_active
         });
+
     };
 
     useEffect(() => {
         const app_name = localStorage.getItem("app_name");
-        document.title = `${app_name} | Plan Edit`;
-        getEditPlan();
-    }, []);
+        document.title = `${app_name} | Branch Update`;
+
+        getBranch();
+
+        if (!googleMapsPromise) return;
+        googleMapsPromise.then(() => initMap());
+    }, [googleMapsPromise]);
 
     return (
         <>
@@ -107,7 +178,7 @@ const PlanEdit = () => {
                         <BreadcrumbItem>
                             <BreadcrumbLink
                                 as={ReactRouterLink}
-                                to={SUPERADMIN_DASHBOARD_PATH}
+                                to={ADMIN_DASHBOARD_PATH}
                             >
                                 {t("dashboard")}
                             </BreadcrumbLink>
@@ -115,7 +186,7 @@ const PlanEdit = () => {
                         <BreadcrumbItem isCurrentPage>
                             <BreadcrumbLink
                                 as={ReactRouterLink}
-                                to={PLAN_LIST_PATH}
+                                to={BRANCH_LIST_PATH}
                             >
                                 {t("list")}
                             </BreadcrumbLink>
@@ -132,7 +203,7 @@ const PlanEdit = () => {
                             <Button
                                 colorScheme="teal"
                                 as={ReactRouterLink}
-                                to={PLAN_LIST_PATH}
+                                to={BRANCH_LIST_PATH}
                                 display={{ base: "none", md: "inline-flex" }}
                                 px={4}
                                 py={2}
@@ -156,78 +227,61 @@ const PlanEdit = () => {
                                         {...register("name", {
                                             required: true,
                                         })}
-                                        type="text"
                                         placeholder={t("name")}
                                     />
                                 </FormControl>
+
+                                <input type="hidden" {...register("lat")} />
+                                <input type="hidden" {...register("long")} />
+
                                 <FormControl isRequired>
-                                    <FormLabel>{t("price")}</FormLabel>
+                                    <FormLabel>{t("area")}</FormLabel>
                                     <Input
-                                        {...register("price", {
+                                        {...register("area", {
                                             required: true,
                                         })}
                                         type="text"
-                                        placeholder={t("price")}
+                                        placeholder={t("area")}
                                     />
                                 </FormControl>
+
+                                <FormControl isRequired>
+                                    <FormLabel>{t("address")}</FormLabel>
+                                    <Input
+                                        {...register("address", {
+                                            required: true,
+                                        })}
+                                        type="text"
+                                        placeholder={t("address")}
+                                    />
+                                </FormControl>
+                                
+                                <FormControl isRequired>
+                                    <FormLabel>{t("phone")}</FormLabel>
+                                    <Input
+                                        {...register("phone", {
+                                            required: true,
+                                        })}
+                                        type="text"
+                                        placeholder={t("phone")}
+                                    />
+                                </FormControl>
+
                                 <FormControl isRequired>
                                     <FormLabel>{t("status")}</FormLabel>
                                     <Select
                                         {...register("is_active")}
-                                        defaultValue="1"
                                     >
                                         <option value="1">{t('active')}</option>
                                         <option value="0"> {t('inactive')} </option>
                                     </Select>
                                 </FormControl>
-                                
-                                <FormControl isRequired>
-                                    <FormLabel>{t("billing_cycle")}</FormLabel>
-                                    <Select
-                                        {...register("billing_cycle")}
-                                        defaultValue="monthly"
-                                    >
-                                        <option value="monthly">{t('monthly')}</option>
-                                        <option value="yearly"> {t('yearly')} </option>
-                                    </Select>
-                                </FormControl>
-                                <FormControl isRequired>
-                                    <FormLabel>{t("branch_limit")}</FormLabel>
-                                    <Input
-                                        {...register("branch_limit", {
-                                            required: true,
-                                        })}
-                                        type="number"
-                                        placeholder={t("branch_limit")}
-                                    />
-                                </FormControl>
-                                <FormControl isRequired>
-                                    <FormLabel>{t("user_limit")}</FormLabel>
-                                    <Input
-                                        {...register("user_limit", {
-                                            required: true,
-                                        })}
-                                        type="number"
-                                        placeholder={t("user_limit")}
-                                    />
-                                </FormControl>
-                                <FormControl isRequired>
-                                    <FormLabel>{t("invoice_limit")}</FormLabel>
-                                    <Input
-                                        {...register("invoice_limit", {
-                                            required: true,
-                                        })}
-                                        type="number"
-                                        placeholder={t("invoice_limit")}
-                                    />
-                                </FormControl>
                             </SimpleGrid>
-
                             <HStack spacing={4} mt={6}>
                                 <Button
                                     type="button"
                                     as={ReactRouterLink}
-                                    to={PLAN_LIST_PATH}
+                                    to={BRANCH_LIST_PATH}
                                     colorScheme="orange"
                                     flex={1}
                                 >
@@ -245,6 +299,7 @@ const PlanEdit = () => {
                                 </Button>
                             </HStack>
                         </form>
+                        <Box ref={mapRef} height="400px" mt={4}></Box>
                     </CardBody>
                 </Card>
             </Box>
@@ -252,4 +307,4 @@ const PlanEdit = () => {
     );
 };
 
-export default PlanEdit;
+export default BranchEdit;

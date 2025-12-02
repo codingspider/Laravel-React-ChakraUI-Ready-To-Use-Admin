@@ -55,6 +55,7 @@ export default function Login() {
             const res = await loginUser(login, password);
             localStorage.setItem('auth_token', res.data.token);
             localStorage.setItem('role', res.data.role);
+            localStorage.setItem('map_api_key', "AIzaSyDjb20izAR-trpI_UePYVNMeZkIOn1q6Ws");
             toast({
                 position: 'bottom-right',
                 title: 'Login successful!',

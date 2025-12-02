@@ -8,7 +8,8 @@ import MainLayout from "./components/layouts/MainLayout";
 import ErrorPage from "./components/pages/ErrorPage";
 
 import { superAdminRoutes } from "./routes/superAdminRoutes";
-import { SUPER_ADMIN_BASE, LOGIN, ROOT, UNAUTHORIZED, FORGOT, RESET_PASSWORD } from "./routes/commonRoutes";
+import { SUPER_ADMIN_BASE, LOGIN, ROOT, UNAUTHORIZED, FORGOT, RESET_PASSWORD, ADMIN_BASE } from "./routes/commonRoutes";
+import { adminRoutes } from "./routes/adminRoutes";
 
 const router = createBrowserRouter([
   { path: LOGIN, element: <Login /> },
@@ -23,6 +24,14 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     errorElement: <ErrorPage />,
     children: superAdminRoutes,
+  },
+
+  // Admin Routes 
+  {
+    path: ADMIN_BASE,
+    element: <MainLayout />,
+    errorElement: <ErrorPage />,
+    children: adminRoutes,
   },
 ]);
 

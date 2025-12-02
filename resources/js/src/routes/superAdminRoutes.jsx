@@ -17,7 +17,7 @@ import BusinessEdit from "../components/superadmin/Business/BusinessEdit";
 import { DASHBOARD, SUPER_ADMIN_BASE } from "./commonRoutes";
 
 
-export const DASHBOARD_PATH = `${SUPER_ADMIN_BASE}/dashboard`;
+export const SUPERADMIN_DASHBOARD_PATH = `${SUPER_ADMIN_BASE}/dashboard`;
 
 export const USER_LIST = "user/list";
 export const USER_ADD = "user/create";
