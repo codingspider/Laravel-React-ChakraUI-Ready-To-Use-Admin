@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('branches', function (Blueprint $table) {
+        Schema::create('addons', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('area');
-            $table->string('address');
-            $table->string('phone');
-            $table->string('is_active');
-            $table->string('lat')->nullable();
-            $table->string('long')->nullable();
-            $table->unsignedBigInteger('business_id');
-            $table->foreign('business_id')->references('id')->on('businesses')->onDelete('cascade');
+            $table->decimal('price', 10,2);
+            $table->unsignedBigInteger('branch_id');
+            $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
+            $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('branches');
+        Schema::dropIfExists('addons');
     }
 };

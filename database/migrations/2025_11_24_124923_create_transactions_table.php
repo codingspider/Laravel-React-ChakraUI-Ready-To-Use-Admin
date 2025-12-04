@@ -23,7 +23,6 @@ return new class extends Migration
             $table->integer('is_kitchen_order')->nullable(); 
 
             // Reference IDs
-            $table->unsignedBigInteger('created_by')->nullable();             // created by
             $table->unsignedBigInteger('contact_id')->nullable();
             $table->unsignedBigInteger('plan_id')->nullable();             // for subscription
             $table->unsignedBigInteger('table_id')->nullable();
@@ -49,6 +48,9 @@ return new class extends Migration
             $table->string('transaction_date')->nullable(); 
             $table->string('coupon_code')->nullable(); 
             $table->string('adjustment_type')->nullable(); 
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             
             $table->foreign('business_id')->references('id')->on('businesses')->onDelete('cascade');
             $table->timestamps();

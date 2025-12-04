@@ -186,5 +186,62 @@ return [
     'show_logo' => 'Show Logo',
     'invoice_start_number' => 'Starting Invoice Number',
     'invoice_prefix' => 'Invoice Prefix',
+    'order_number' => 'Order Number',
+    'image' => 'Image',
+    'add_row' => 'Add Row',
+    'items' => 'Items',
+
+    // MAIN DETAILS
+    "branch" => "Branch",
+    "main_details" => "Main Details",
+    "title" => "Title",
+    "enter_title" => "Enter item title",
+    "category" => "Category",
+    "select_category" => "Select category",
+    "select_branch" => "Select Branch",
+    "pizza" => "Pizza",
+    "burger" => "Burger",
+    "sequence_index" => "Sequence Index",
+    "sku" => "SKU (serial id)",
+    "enter_sku" => "Enter SKU ID",
+    "subtitle" => "Subtitle",
+    "enter_subtitle" => "Enter subtitle",
+    "description" => "Description",
+    "enter_description" => "Enter description",
+
+    // Availability
+    "item_available_for" => "Item available for",
+    "dine_in" => "Dine in",
+    "pickup" => "Pickup",
+    "delivery" => "Delivery",
+    "online_orders" => "Online orders",
+    "pos_orders" => "POS orders",
+    "available_all_branches" => "This item is available in all branches",
+    "select_branch" => "Select Branch",
+    "featured_item" => "This is a featured item ⭐",
+
+    // IMAGES
+    "images" => "Images",
+    "main_image" => "Main Image",
+    "additional_images" => "Additional Images",
+
+    // VARIATIONS
+    "variations" => "Variations",
+    "add_variation" => "Add Variation",
+
+    // ADDONS
+    "addons" => "Add-ons",
+    "add_addon" => "Add Add-on",
+
+    // COMMON FIELDS
+    "name" => "Name",
+    "price" => "Price",
+    "add" => "Add",
+
+    // ACTION BUTTONS
+    "create_go_back" => "Create & Go Back",
+    "create_item" => "Create Item",
+    "add_variation" => "Add Variation",
+    "add_add_on" => "Add Add-on",
 
 ];

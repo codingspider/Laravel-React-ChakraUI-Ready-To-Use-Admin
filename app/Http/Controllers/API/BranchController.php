@@ -25,7 +25,8 @@ class BranchController extends BaseController
     public function getBranch()
     {
         try {
-            $branches = Branch::where('is_active', 1)->get();
+            $user = auth()->user();
+            $branches = Branch::where('is_active', 1)->where('business_id', $user->business_id)->get();
             return $this->sendResponse($branches, 'Data retrieved successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Server Error: ' . $e->getMessage());
@@ -38,7 +39,13 @@ class BranchController extends BaseController
         DB::beginTransaction();
 
         try {
-            $branch = Branch::create($request->validated());
+            $data = $request->validated();
+            $data['created_by'] = createdBy();
+            $data['business_id'] = auth()->user()->business_id;
+            $branch = Branch::create($data);
+
+            activityLog('branch','create','User '.auth()->user()->name.' created branch '.$branch->name);
+
             DB::commit();
             return $this->sendResponse($branch, 'Branch saved successfully.');
 
@@ -69,6 +76,9 @@ class BranchController extends BaseController
             }
 
             $branch->update($request->validated());
+
+            activityLog('branch','update','User '.auth()->user()->name.' updated branch '.$branch->name);
+
             DB::commit();
             return $this->sendResponse($branch, 'Branch saved successfully.');
 
@@ -86,6 +96,7 @@ class BranchController extends BaseController
             if (!$branch) {
                 return $this->sendError('Branch not found.', 404);
             }
+            activityLog('branch','delete','User '.auth()->user()->name.' deleted branch '.$branch->name);
             $branch->delete();
             return $this->sendResponse([], 'Branch deleted successfully.');
         } catch (\Exception $e) {

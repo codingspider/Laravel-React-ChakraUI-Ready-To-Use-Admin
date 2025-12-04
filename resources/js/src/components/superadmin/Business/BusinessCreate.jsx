@@ -386,6 +386,7 @@ const BusinessCreate = () => {
                                 <FormControl isRequired>
                                     <FormLabel>{t("subscription_plan")}</FormLabel>
                                     <Select
+                                        placeholder="Select"
                                         {...register("plan_id")}
                                     >
                                         {plans.map((plan) => (

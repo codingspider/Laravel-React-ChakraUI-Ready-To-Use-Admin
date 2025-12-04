@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id'); // Foreign key to branches table
             $table->json('use_for')->nullable(); // e.g. ["dine", "pickup"]
             $table->boolean('is_default')->default(false);
+            $table->unsignedBigInteger('created_by');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
 
             // Foreign key constraint

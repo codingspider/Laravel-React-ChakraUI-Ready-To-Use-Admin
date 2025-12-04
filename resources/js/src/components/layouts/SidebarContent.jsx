@@ -32,7 +32,7 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { BUSINESS_ADD_PATH, BUSINESS_EDIT_PATH, BUSINESS_LIST_PATH, PLAN_LIST_PATH, SUPERADMIN_DASHBOARD_PATH, USER_LIST_PATH } from "../../routes/superAdminRoutes";
-import { ADMIN_DASHBOARD_PATH, BRANCH_LIST_PATH, GENERAL_PAGE_PATH } from "../../routes/adminRoutes";
+import { ADDON_LIST_PATH, ADMIN_DASHBOARD_PATH, BRANCH_LIST_PATH, CATEGORY_LIST_PATH, GENERAL_PAGE_PATH, ITEM_ADD_PATH, VARIATION_LIST_PATH } from "../../routes/adminRoutes";
 
 
 const SidebarContent = ({ onClose, ...rest }) => {
@@ -201,42 +201,42 @@ const SidebarContent = ({ onClose, ...rest }) => {
                     >
                         <Box ml="8" mt="1" borderRadius="md">
                             <NavLink
-                                to={USER_LIST_PATH}
+                                to={CATEGORY_LIST_PATH}
                                 icon={FcWorkflow}
                                 activeBg={activeBg}
                                 activeColor={activeColor}
                                 hoverBg={hoverBg}
-                                active={isActive(USER_LIST_PATH)}
+                                active={isActive(CATEGORY_LIST_PATH)}
                                 label={t("categories")}
                                 small
                             />
                             <NavLink
-                                to="/super/admin/expense"
+                                to={ITEM_ADD_PATH}
                                 icon={FcWorkflow}
                                 activeBg={activeBg}
                                 activeColor={activeColor}
                                 hoverBg={hoverBg}
-                                active={isActive("/super/admin/expense")}
+                                active={isActive(ITEM_ADD_PATH)}
                                 label={t("items")}
                                 small
                             />
                             <NavLink
-                                to="/super/admin/expense/create"
+                                to={ADDON_LIST_PATH}
                                 icon={FcWorkflow}
                                 activeBg={activeBg}
                                 activeColor={activeColor}
                                 hoverBg={hoverBg}
-                                active={isActive("/super/admin/expense/create")}
+                                active={isActive(ADDON_LIST_PATH)}
                                 label={t("addons")}
                                 small
                             />
                             <NavLink
-                                to="/super/admin/expense/create"
+                                to={VARIATION_LIST_PATH}
                                 icon={FcWorkflow}
                                 activeBg={activeBg}
                                 activeColor={activeColor}
                                 hoverBg={hoverBg}
-                                active={isActive("/super/admin/expense/create")}
+                                active={isActive(VARIATION_LIST_PATH)}
                                 label={t("variations")}
                                 small
                             />

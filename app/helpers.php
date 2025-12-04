@@ -1,5 +1,8 @@
 <?php 
 
+use App\Models\Branch;
+use App\Models\ActivityLog;
+
 function getCurrencies(){
     return array (
             'ALL' => 'Albania Lek',
@@ -591,4 +594,39 @@ function uploadImage($file, $folder = 'uploads', $oldFile = null)
     $file->move($uploadPath, $filename);
 
     return $folder . '/' . $filename;
+}
+
+function createdBy()
+{
+    return auth()->check() ? auth()->id() : null;
+}
+
+function activityLog($module, $action, $description)
+{
+    $user = auth()->user();
+
+    ActivityLog::create([
+        'user_id'     => $user ? $user->id : null,
+        'module'      => $module,
+        'action'      => $action,
+        'description' => $description
+    ]);
+}
+
+
+function getBranchIds()
+{
+    $user = auth()->user();
+
+    // If no user, return empty array
+    if (!$user) {
+        return [];
+    }
+
+    // if user is admin → return all branch IDs of same business
+    if ($user->role === 'admin') {
+        return Branch::where('business_id', $user->business_id) ->pluck('id')->toArray();
+    }
+
+    return [$user->branch_id];
 }

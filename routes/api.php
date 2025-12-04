@@ -9,8 +9,11 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\BranchController;
 use App\Http\Controllers\API\GeneralController;
 use App\Http\Controllers\API\BusinessController;
-use App\Http\Controllers\API\Admin\BusinessController as AdminBusinessController;
 use App\Http\Controllers\API\RegisterController;
+use App\Http\Controllers\API\Admin\AddonController;
+use App\Http\Controllers\API\Admin\CategoryController;
+use App\Http\Controllers\API\Admin\VariationController;
+use App\Http\Controllers\API\Admin\BusinessController as AdminBusinessController;
 
 
 Route::controller(RegisterController::class)->group(function(){
@@ -33,12 +36,19 @@ Route::middleware(['auth:sanctum'])->prefix('superadmin')->group(function () {
 Route::middleware(['auth:sanctum', 'check_active_business'])->prefix('admin')->group(function () {
     Route::apiResource('branches', BranchController::class);
     Route::apiResource('vats', VatController::class);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('addons', AddonController::class);
+    Route::apiResource('variations', VariationController::class);
+    
+
     Route::get('owner/business', [AdminBusinessController::class, 'index']);
     Route::put('business/setting/update/{id}', [AdminBusinessController::class, 'update']);
     Route::post('notification/update', [AdminBusinessController::class, 'updateNotification']);
     Route::post('update/invoice/setting', [AdminBusinessController::class, 'updateInvoiceSetting']);
     Route::get('get/notification/setting', [AdminBusinessController::class, 'getNotificationSetting']);
     Route::get('get/invoice/setting', [AdminBusinessController::class, 'getInvoiceSetting']);
+    Route::get('get/all/addons', [AddonController::class, 'getAllAddons']);
+    Route::get('get/all/variations', [VariationController::class, 'getAllVariations']);
 });
 
 Route::middleware(['auth:sanctum', 'check_active_business'])->group(function () {
