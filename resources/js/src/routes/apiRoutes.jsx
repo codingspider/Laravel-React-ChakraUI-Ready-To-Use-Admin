@@ -31,6 +31,7 @@ export const UPDATE_INVOICE_SETTING = 'admin/update/invoice/setting';
 export const GET_INVOICE_SETTING = 'admin/get/invoice/setting';
 export const GET_BRANCH_ADDONS = 'admin/get/all/addons';
 export const GET_BRANCH_VARIATIONS = 'admin/get/all/variations';
+export const GET_ALL_CATEGROIES = 'admin/get/all/categories';
 
 
 export const STORE_CATEGORY = 'admin/categories';

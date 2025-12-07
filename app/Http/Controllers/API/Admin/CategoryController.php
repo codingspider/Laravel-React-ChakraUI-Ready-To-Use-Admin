@@ -35,6 +35,16 @@ class CategoryController extends BaseController
             return $this->sendError('Server Error: '.$e->getMessage());
         }
     }
+    
+    public function getAllCategory(Request $request)
+    {
+        try {
+            $categories = Category::all();
+            return $this->sendResponse($categories, 'Category retrieved successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Server Error: '.$e->getMessage());
+        }
+    }
 
     /**
      * Show single product (ingredient)

@@ -15,10 +15,11 @@ import {
   IconButton,
   Tag,
   useDisclosure,
-  useToast
+  useToast,
+  Switch
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import VariationModal from "./VariationModal";
 import AddonModal from "./AddonModal";
@@ -28,6 +29,7 @@ import { GET_BRANCH_ADDONS, GET_BRANCH_VARIATIONS, STORE_ITEM } from "../../../r
 import { useCurrencyFormatter } from "../../../useCurrencyFormatter";
 import { useBranches } from "../../../hooks/useBranches";
 import { useVariations } from "../../../hooks/useVariations";
+import { useCategories } from "../../../hooks/useCategories";
 
 export default function ItemCreate() {
   const { t } = useTranslation();
@@ -44,15 +46,17 @@ export default function ItemCreate() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      title: "",
-      category: "",
+      name: "",
+      category_id: "",
+      branch_id: "",
       sequence_index: "",
       sku: "",
       subtitle: "",
       description: "",
       main_image: null,
-      additional_images: null,
-
+      is_active: 1,
+      additional_images: [],
+      item_available_for: [],
       variations: [],
       addons: []
     }
@@ -68,56 +72,83 @@ export default function ItemCreate() {
   const [isLoading, setIsLoading] = useState(true); 
   const toast = useToast(); 
   const { branches } = useBranches();
+  const { categories } = useCategories();
+  const { variations, loading, refreshVariations } = useVariations();
 
   const onSubmit = async (data) => {
-        setIsSubmitting(true);
-        try {
-            const formData = new FormData();
-            formData.append("name", data.name ?? "");
-            formData.append("order_number", data.order_number ?? "");
-            if (data.image?.length) {
-                formData.append("image", data.image[0]);
-            }
+  setIsSubmitting(true);
 
-            const res = await api.post(STORE_ITEM, formData);
-            reset();
+    try {
+        const formData = new FormData();
 
-            toast({
-                position: "bottom-right",
-                title: res.data.message,
-                status: "success",
-                duration: 3000,
-                isClosable: true,
-            });
-  
-        } catch (err) {
-            const errorResponse = err?.response?.data;
-            if (errorResponse?.errors) {
-                const errorMessage = Object.values(errorResponse.errors)
-                    .flat()
-                    .join(" ");
-                toast({
-                    position: "bottom-right",
-                    title: "Error",
-                    description: errorMessage,
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            } else if (errorResponse?.message) {
-                toast({
-                    position: "bottom-right",
-                    title: "Error",
-                    description: errorResponse.message,
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            }
-        } finally {
-            setIsSubmitting(false);
+        // Basic fields
+        formData.append("name", data.name);
+        formData.append("description", data.description);
+        formData.append("category_id", data.category_id);
+        formData.append("branch_id", data.branch_id);
+        formData.append("featured_item", data.featured_item);
+        formData.append("sequence_index", data.sequence_index);
+        formData.append("sku", data.sku);
+        formData.append("subtitle", data.subtitle);
+        formData.append("is_active", data.is_active);
+
+        // variations[]
+        data.variations.forEach(v => {
+            formData.append("variations[]", v.variation_id);
+        });
+
+        // addons[]
+        data.addons.forEach(a => {
+            formData.append("addons[]", a.addon_id);
+        });
+
+        // item_available_for[]
+        data.item_available_for.forEach(v => {
+            formData.append("item_available_for[]", v);
+        });
+
+        // main_image
+        if (data.main_image?.[0]) {
+            formData.append("main_image", data.main_image[0]);
         }
+
+        console.log(formData);
+
+        const res = await api.post(STORE_ITEM, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        reset();
+
+        toast({
+            position: "bottom-right",
+            title: res.data.message,
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+        });
+
+    } catch (err) {
+        const errorResponse = err?.response?.data;
+
+        const description = errorResponse?.errors
+            ? Object.values(errorResponse.errors).flat().join(" ")
+            : errorResponse?.message ?? "Something went wrong";
+
+        toast({
+            position: "bottom-right",
+            title: "Error",
+            description,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+
+    } finally {
+        setIsSubmitting(false);
+    }
   };
+
 
   const fetchAddons = async () => {
         try {
@@ -132,15 +163,7 @@ export default function ItemCreate() {
   };
 
   const fetchVariations = async () => {
-        try {
-            setIsLoading(true);
-            const res = await api.get(GET_BRANCH_VARIATIONS);
-            setVariationData(res.data.data);
-        } catch (err) {
-            console.error("fetchAddons error:", err);
-        } finally {
-            setIsLoading(false);
-        }
+    setVariationData(variations);
   };
 
   useEffect(() => {
@@ -151,7 +174,7 @@ export default function ItemCreate() {
   useEffect(() => {
       fetchAddons();
       fetchVariations();
-  }, []); 
+  }, [variations]); 
 
   return (
     <Box mx="auto">
@@ -164,7 +187,7 @@ export default function ItemCreate() {
             
             <FormControl isRequired>
               <FormLabel>{t("branch")}</FormLabel>
-              <Select {...register("branch")} placeholder={t("select_branch")}>
+              <Select {...register("branch_id")} placeholder={t("select_branch")}>
                 {branches.map((branch) => (
                   <option key={branch.id} value={branch.id}>
                     {branch.name}
@@ -173,17 +196,21 @@ export default function ItemCreate() {
               </Select>
             </FormControl>
 
+            
             <FormControl isRequired>
-              <FormLabel>{t("title")}</FormLabel>
-              <Input {...register("title")} placeholder={t("enter_title")} />
+              <FormLabel>{t("category")}</FormLabel>
+              <Select {...register("category_id")} placeholder={t("select_category")}>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </Select>
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel>{t("category")}</FormLabel>
-              <Select {...register("category")} placeholder={t("select_category")}>
-                <option value="pizza">{t("pizza")}</option>
-                <option value="burger">{t("burger")}</option>
-              </Select>
+              <FormLabel>{t("title")}</FormLabel>
+              <Input {...register("name")} placeholder={t("enter_title")} />
             </FormControl>
 
 
@@ -213,21 +240,33 @@ export default function ItemCreate() {
           <Box mt={4}>
             <FormLabel>{t("item_available_for")}</FormLabel>
             <Flex gap={4}>
-              <Checkbox defaultChecked>{t("dine_in")}</Checkbox>
-              <Checkbox defaultChecked>{t("pickup")}</Checkbox>
-              <Checkbox defaultChecked>{t("delivery")}</Checkbox>
+              <Checkbox {...register('item_available_for[]')} value="dine_in" defaultChecked>
+                {t("dine_in")}
+              </Checkbox>
+              <Checkbox {...register('item_available_for[]')} value="pickup" defaultChecked>
+                {t("pickup")}
+              </Checkbox>
+              <Checkbox {...register('item_available_for[]')} value="delivery" defaultChecked>
+                {t("delivery")}
+              </Checkbox>
             </Flex>
 
             <Box mt={4}>
-              <Checkbox defaultChecked>{t("online_orders")}</Checkbox>
-              <Checkbox ml={5} defaultChecked>{t("pos_orders")}</Checkbox>
+              <Checkbox {...register('use_for[]')} value="online_orders" defaultChecked>
+                {t("online_orders")}
+              </Checkbox>
+              <Checkbox {...register('use_for[]')} value="pos_orders" ml={5} defaultChecked>
+                {t("pos_orders")}
+              </Checkbox>
             </Box>
 
             <Box mt={4}>
-              <Checkbox>{t("featured_item")}</Checkbox>
+              <Checkbox {...register('featured_item')} value={1}>
+                {t("featured_item")}
+              </Checkbox>
             </Box>
-
           </Box>
+
         </CardBody>
       </Card>
 
@@ -239,11 +278,6 @@ export default function ItemCreate() {
             <FormControl>
               <FormLabel>{t("main_image")}</FormLabel>
               <Input type="file" {...register("main_image")} />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>{t("additional_images")}</FormLabel>
-              <Input type="file" multiple {...register("additional_images")} />
             </FormControl>
           </SimpleGrid>
         </CardBody>
@@ -347,6 +381,22 @@ export default function ItemCreate() {
           <Button mt={4} leftIcon={<AddIcon />} colorScheme="teal" onClick={addonModal.onOpen}>
             {t("add_addon")}
           </Button>
+
+          <FormControl display="flex" mt={4} isRequired alignItems="center">
+          <FormLabel mb="0">{t('is_active')}</FormLabel>
+          <Controller
+              name="is_active"
+              control={control}
+              defaultValue={1} // 0 or 1
+              render={({ field }) => (
+                  <Switch
+                      colorScheme="teal"
+                      isChecked={field.value === 1}
+                      onChange={(e) => field.onChange(e.target.checked ? 1 : 0)}
+                  />
+              )}
+          />
+          </FormControl> 
 
         </CardBody>
       </Card>

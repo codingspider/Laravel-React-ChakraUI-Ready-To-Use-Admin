@@ -11,6 +11,7 @@ use App\Http\Controllers\API\GeneralController;
 use App\Http\Controllers\API\BusinessController;
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\Admin\AddonController;
+use App\Http\Controllers\API\Admin\ProductController;
 use App\Http\Controllers\API\Admin\CategoryController;
 use App\Http\Controllers\API\Admin\VariationController;
 use App\Http\Controllers\API\Admin\BusinessController as AdminBusinessController;
@@ -39,6 +40,7 @@ Route::middleware(['auth:sanctum', 'check_active_business'])->prefix('admin')->g
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('addons', AddonController::class);
     Route::apiResource('variations', VariationController::class);
+    Route::apiResource('products', ProductController::class);
     
 
     Route::get('owner/business', [AdminBusinessController::class, 'index']);
@@ -49,6 +51,7 @@ Route::middleware(['auth:sanctum', 'check_active_business'])->prefix('admin')->g
     Route::get('get/invoice/setting', [AdminBusinessController::class, 'getInvoiceSetting']);
     Route::get('get/all/addons', [AddonController::class, 'getAllAddons']);
     Route::get('get/all/variations', [VariationController::class, 'getAllVariations']);
+    Route::get('get/all/categories', [CategoryController::class, 'getAllCategory']);
 });
 
 Route::middleware(['auth:sanctum', 'check_active_business'])->group(function () {
