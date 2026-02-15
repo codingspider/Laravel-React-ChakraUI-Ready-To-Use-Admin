@@ -155,7 +155,7 @@ const VatEdit = ({ isOpen, onClose, vat, onSuccess }) => {
             isLoading={isSubmitting}
             loadingText="Saving Data..."
             colorScheme='teal'>
-              {t('add')}
+              {t('update')}
             </Button>
           </ModalFooter>
         </form>

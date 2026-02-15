@@ -216,7 +216,7 @@ export default function ItemCreate() {
 
             <FormControl isRequired>
               <FormLabel>{t("sequence_index")}</FormLabel>
-              <Input {...register("sequence_index")} placeholder="01" />
+              <Input {...register("sequence_index")} type="number" placeholder="01" />
             </FormControl>
 
             <FormControl>

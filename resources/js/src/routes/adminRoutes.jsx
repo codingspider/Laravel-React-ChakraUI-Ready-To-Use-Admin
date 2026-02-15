@@ -20,6 +20,7 @@ import VariationCreate from './../components/admin/variations/VariationCreate';
 import VariationEdit from './../components/admin/variations/VariationEdit';
 
 import ItemCreate from "../components/admin/items/ItemCreate";
+import ItemList from "../components/admin/items/ItemList";
 
 export const BRANCH_LIST = "branch/list";
 export const BRANCH_ADD = "branch/create";
@@ -87,4 +88,5 @@ export const adminRoutes = [
     { path: VARIATION_EDIT, element: <ProtectedRoute role="admin"><VariationEdit /></ProtectedRoute> },
 
     { path: ITEM_ADD_PATH, element: <ProtectedRoute role="admin"><ItemCreate /></ProtectedRoute> },
+    { path: ITEM_LIST_PATH, element: <ProtectedRoute role="admin"><ItemList /></ProtectedRoute> },
 ];

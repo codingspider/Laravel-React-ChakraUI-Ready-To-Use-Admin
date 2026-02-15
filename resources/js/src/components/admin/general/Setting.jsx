@@ -105,8 +105,6 @@ const Setting = () => {
         }
     };
 
-
-
     const getTimeZone = async () => {
         const res = await api.get(GET_TIMEZONES);
         const timezones = res.data.data;

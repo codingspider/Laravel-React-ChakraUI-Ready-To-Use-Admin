@@ -40,6 +40,7 @@ class VatController extends BaseController
         try {
             $data = $request->validated();
             $data['use_for'] = json_encode($data['use_for']);
+            $data['created_by'] = auth()->user()->id;
             $branch = Vat::create($data);
             DB::commit();
             return $this->sendResponse($branch, 'Vat saved successfully.');
