@@ -1,8 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link as ReactRouterLink } from "react-router-dom";
-import { Button, Link as ChakraLink } from "@chakra-ui/react";
-
 import {
     Box,
     Flex,
@@ -13,7 +9,6 @@ import {
     Text,
     Menu,
     MenuButton,
-    MenuDivider,
     MenuItem,
     MenuList,
     useColorModeValue,
@@ -23,102 +18,107 @@ import {
 
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { FiMenu, FiChevronDown } from "react-icons/fi";
+
+import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 import { LanguageContext } from "../../LanguageProvider";
 import { useTranslation } from "react-i18next";
 
-const TopNav = ({ onOpen, ...rest }) => {
+const TopNav = ({ onOpen }) => {
     const { colorMode, toggleColorMode } = useColorMode();
     const { lang, changeLanguage } = useContext(LanguageContext);
-    const [user, setUser] = useState([]);
     const { t } = useTranslation();
     const navigate = useNavigate();
+
+    const [user, setUser] = useState({ name: "", role: "" });
+
+    useEffect(() => {
+        setUser({
+            name: localStorage.getItem("name") || "",
+            role: localStorage.getItem("role") || "",
+        });
+    }, []);
+
     const handleLogout = async () => {
         await logoutUser(navigate);
     };
-    useEffect (() => {
-        const name = localStorage.getItem('name');
-        const role = localStorage.getItem('role');
-        const data = { role: role, name: name };
-        setUser(data);
-    }, []);
+
     return (
-        <>
-            <Flex
-                ml={{ base: 0, md: 60 }}
-                px="4"
-                height="20"
-                alignItems="center"
-                bg={useColorModeValue("white", "gray.900")}
-                borderBottomWidth="1px"
-                borderBottomColor={useColorModeValue("gray.200", "gray.700")}
-                justifyContent="space-between"
-                {...rest}
-            >
+        <Flex
+            ml={{ base: 0, md: "238px" }}
+            px={4}
+            height="60px"
+            alignItems="center"
+            justifyContent="space-between"
+            bg={useColorModeValue("white", "gray.900")}
+            borderBottomWidth="1px"
+            borderBottomColor={useColorModeValue("gray.200", "gray.700")}
+            position="sticky"
+            top="0"
+            zIndex="1000"
+        >
+            {/* MOBILE MENU BUTTON */}
+            <IconButton
+                display={{ base: "flex", md: "none" }}
+                onClick={onOpen}
+                icon={<FiMenu />}
+                variant="outline"
+                aria-label="Open Menu"
+            />
+
+            {/* TITLE */}
+            <Text fontSize="lg" fontWeight="bold">
+                Dashboard
+            </Text>
+
+            {/* RIGHT SIDE */}
+            <HStack spacing={4}>
+
+                {/* DARK MODE */}
                 <IconButton
-                    display={{ base: "flex", md: "none" }}
-                    onClick={onOpen}
-                    variant="outline"
-                    aria-label="open menu"
-                    icon={<FiMenu />}
+                    aria-label="Toggle color mode"
+                    icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                    onClick={toggleColorMode}
+                    variant="ghost"
                 />
-                <Text fontSize="lg" fontWeight="bold">
-                    Dashboard
-                </Text>
 
-                <HStack spacing="4">
-                    <Box p={5}>
-                        <IconButton
-                            aria-label="Toggle color mode"
-                            icon={
-                                colorMode === "light" ? (
-                                    <MoonIcon />
-                                ) : (
-                                    <SunIcon />
-                                )
-                            }
-                            onClick={toggleColorMode}
-                        />
-                    </Box>
-                    <Select
-                        value={lang}
-                        mr={3}
-                        display={{ base: "none", md: "block" }}
-                        onChange={(e) => changeLanguage(e.target.value)}
-                    >
-                        <option value="en">English</option>
-                        <option value="bn">বাংলা</option>
-                    </Select>
+                {/* LANGUAGE */}
+                <Select
+                    value={lang}
+                    onChange={(e) => changeLanguage(e.target.value)}
+                    w="120px"
+                    display={{ base: "none", md: "block" }}
+                >
+                    <option value="en">English</option>
+                    <option value="bn">বাংলা</option>
+                </Select>
 
-                    {/* <IconButton
-                        size="lg"
-                        variant="ghost"
-                        w="40px"
-                        h="40px"
-                        icon={<FcGlobe />}
-                    /> */}
-                    <Menu>
-                        <MenuButton>
-                            <HStack>
-                                <Avatar name={user.name} src="" />
-                                <VStack
-                                    display={{ base: "none", md: "flex" }}
-                                    align="flex-start"
-                                    spacing="0"
-                                    ml="2"
-                                >
-                                    <Text fontSize="sm">{user.name}</Text>
-                                </VStack>
-                                <FiChevronDown />
-                            </HStack>
-                        </MenuButton>
-                        <MenuList>
-                            <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
-                        </MenuList>
-                    </Menu>
-                </HStack>
-            </Flex>
-        </>
+                {/* USER MENU */}
+                <Menu>
+                    <MenuButton>
+                        <HStack>
+                            <Avatar size="sm" name={user.name} />
+
+                            <VStack
+                                display={{ base: "none", md: "flex" }}
+                                spacing="0"
+                                align="flex-start"
+                            >
+                                <Text fontSize="sm">{user.name}</Text>
+                            </VStack>
+
+                            <FiChevronDown />
+                        </HStack>
+                    </MenuButton>
+
+                    <MenuList>
+                        <MenuItem onClick={handleLogout}>
+                            {t("logout")}
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
+            </HStack>
+        </Flex>
     );
 };
 
