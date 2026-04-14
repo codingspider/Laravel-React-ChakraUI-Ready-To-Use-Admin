@@ -19,7 +19,7 @@ import Dashboard from './../superadmin/Dashboard';
 const SidebarContent = ({ onClose, collapsed }) => {
     const location = useLocation();
 
-    const sidebarBg = useColorModeValue("white", "gray.900");
+    const sidebarBg = useColorModeValue("teal.800", "teal.900");
     const hoverBg = useColorModeValue("teal.400", "teal.600");
     const activeBg = useColorModeValue("teal.500", "teal.700");
 
@@ -31,6 +31,7 @@ const SidebarContent = ({ onClose, collapsed }) => {
             bg={sidebarBg}
             h="100vh"
             position="fixed"
+            color="white"
         >
 
             {/* HEADER */}

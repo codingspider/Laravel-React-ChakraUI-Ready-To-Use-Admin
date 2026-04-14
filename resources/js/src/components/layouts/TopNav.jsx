@@ -50,7 +50,7 @@ const TopNav = ({ onOpen }) => {
             height="60px"
             alignItems="center"
             justifyContent="space-between"
-            bg={useColorModeValue("white", "gray.900")}
+            bg={useColorModeValue("teal.600", "teal.700")}
             borderBottomWidth="1px"
             borderBottomColor={useColorModeValue("gray.200", "gray.700")}
             position="sticky"
