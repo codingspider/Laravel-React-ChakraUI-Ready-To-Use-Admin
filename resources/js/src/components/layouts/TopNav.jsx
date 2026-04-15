@@ -1,88 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-    Box,
-    Flex,
-    IconButton,
-    Avatar,
-    HStack,
-    VStack,
-    Text,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    useColorModeValue,
-    Select,
-    useColorMode,
-} from "@chakra-ui/react";
+import React, { useContext } from 'react';
+import { Flex, HStack, Icon, Avatar, Button, Input, InputGroup, InputLeftElement, Menu, MenuButton, MenuList, MenuItem, MenuDivider, Text, Tooltip, useColorMode, useColorModeValue, Box, Select } from '@chakra-ui/react';
+import { Search, Bell, Sun, Moon, Settings, LogOut, LayoutDashboard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { LanguageContext } from './../../LanguageProvider';
 
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { FiMenu, FiChevronDown } from "react-icons/fi";
-
-import { useNavigate } from "react-router-dom";
-import { logoutUser } from "../../services/authService";
-import { LanguageContext } from "../../LanguageProvider";
-import { useTranslation } from "react-i18next";
-
-const TopNav = ({ onOpen }) => {
+const ThemeToggle = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const { lang, changeLanguage } = useContext(LanguageContext);
     const { t } = useTranslation();
-    const navigate = useNavigate();
-
-    const [user, setUser] = useState({ name: "", role: "" });
-
-    useEffect(() => {
-        setUser({
-            name: localStorage.getItem("name") || "",
-            role: localStorage.getItem("role") || "",
-        });
-    }, []);
-
-    const handleLogout = async () => {
-        await logoutUser(navigate);
-    };
 
     return (
-        <Flex
-            ml={{ base: 0, md: "238px" }}
-            px={4}
-            height="60px"
-            alignItems="center"
-            justifyContent="space-between"
-            bg={useColorModeValue("teal.600", "teal.700")}
-            borderBottomWidth="1px"
-            borderBottomColor={useColorModeValue("gray.200", "gray.700")}
-            position="sticky"
-            top="0"
-            zIndex="1000"
-        >
-            {/* MOBILE MENU BUTTON */}
-            <IconButton
-                display={{ base: "flex", md: "none" }}
-                onClick={onOpen}
-                icon={<FiMenu />}
-                variant="outline"
-                aria-label="Open Menu"
-            />
-
-            {/* TITLE */}
-            <Text fontSize="lg" fontWeight="bold">
-                Dashboard
-            </Text>
-
-            {/* RIGHT SIDE */}
-            <HStack spacing={4}>
-
-                {/* DARK MODE */}
-                <IconButton
-                    aria-label="Toggle color mode"
-                    icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                    onClick={toggleColorMode}
-                    variant="ghost"
-                />
-
-                {/* LANGUAGE */}
+        <>
+        {/* LANGUAGE */}
                 <Select
                     value={lang}
                     onChange={(e) => changeLanguage(e.target.value)}
@@ -93,33 +22,56 @@ const TopNav = ({ onOpen }) => {
                     <option value="bn">বাংলা</option>
                 </Select>
 
-                {/* USER MENU */}
-                <Menu>
-                    <MenuButton>
-                        <HStack>
-                            <Avatar size="sm" name={user.name} />
-
-                            <VStack
-                                display={{ base: "none", md: "flex" }}
-                                spacing="0"
-                                align="flex-start"
-                            >
-                                <Text fontSize="sm">{user.name}</Text>
-                            </VStack>
-
-                            <FiChevronDown />
-                        </HStack>
-                    </MenuButton>
-
-                    <MenuList>
-                        <MenuItem onClick={handleLogout}>
-                            {t("logout")}
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
-            </HStack>
-        </Flex>
+                <Tooltip label="Toggle Theme" hasArrow placement="bottom">
+            <Button variant="ghost" onClick={toggleColorMode} p="2" borderRadius="lg">
+                <Icon as={colorMode === 'light' ? Moon : Sun} boxSize={5} />
+            </Button>
+        </Tooltip>
+        </>
+        
     );
 };
 
-export default TopNav;
+const ProfileMenu = () => (
+    <Menu>
+        <MenuButton as={Button} variant="ghost" p="1" borderRadius="lg">
+            <Avatar size="sm" name="Kent Dodds" src="https://bit.ly/kent-c-dodds" border="2px solid transparent" _hover={{ borderColor: 'brand.400' }} transition="0.2s" />
+        </MenuButton>
+        <MenuList align="center" w="56" boxShadow="lg" borderRadius="lg" border="1px solid" borderColor={useColorModeValue('gray.100', 'gray.700')} zIndex={99999}>
+            <div style={{ padding: '8px 16px 4px' }}>
+                <Text fontWeight="600" fontSize="sm">Kent Dodds</Text>
+                <Text fontSize="xs" color="gray.500">kent@example.com</Text>
+            </div>
+            <MenuDivider />
+            <MenuItem icon={<Icon as={Settings} boxSize={4} />}>Settings</MenuItem>
+            <MenuItem icon={<Icon as={LogOut} boxSize={4} />} color="red.500">Logout</MenuItem>
+        </MenuList>
+    </Menu>
+);
+
+export default function TopNav({ onMobileMenuOpen }) {
+    const bg = useColorModeValue('white', 'gray.800');
+    const borderColor = useColorModeValue('gray.200', 'gray.700');
+
+    return (
+        <Flex as="header" align="center" justify="space-between" px={{ base: 4, md: 8 }} py="4" borderBottom="1px" borderColor={borderColor} bg={bg} position="sticky" top="0" zIndex="9999" boxShadow="sm">
+            <HStack spacing="4">
+                <Button variant="ghost" p="2" borderRadius="lg" display={{ base: 'flex', lg: 'none' }} onClick={onMobileMenuOpen}>
+                    <Icon as={LayoutDashboard} boxSize={6} />
+                </Button>
+                <InputGroup maxW="md" display={{ base: 'none', sm: 'flex' }}>
+                    <InputLeftElement pointerEvents="none"><Icon as={Search} color="gray.400" boxSize={4} /></InputLeftElement>
+                    <Input variant="filled" placeholder="Search transactions, customers..." borderRadius="xl" bg={useColorModeValue('gray.100', 'gray.700')} _focus={{ bg: useColorModeValue('white', 'gray.600'), borderColor: 'brand.400' }} border="1px" borderColor="transparent" />
+                </InputGroup>
+            </HStack>
+            <HStack spacing="2">
+                <ThemeToggle />
+                <Button variant="ghost" p="2" borderRadius="lg" position="relative">
+                    <Icon as={Bell} boxSize={5} />
+                    <Box w="2" h="2" bg="red.500" borderRadius="full" position="absolute" top="2" right="2" />
+                </Button>
+                <ProfileMenu />
+            </HStack>
+        </Flex>
+    );
+}

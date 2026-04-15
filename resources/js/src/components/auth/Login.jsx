@@ -15,6 +15,8 @@ import {
   InputRightElement,
   InputGroup,
   useToast,
+  VStack,
+  HStack,
 
 } from '@chakra-ui/react';
 
@@ -23,7 +25,7 @@ import { Link as ChakraLink } from '@chakra-ui/react';
 import { loginUser } from '../../services/authService';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { ADMIN_BASE, DASHBOARD, FORGOT, STAFF_BASE, SUPER_ADMIN_BASE, USER_BASE } from '../../routes/commonRoutes';
+import { ADMIN_BASE, DASHBOARD, FORGOT, REGISTER, STAFF_BASE, SUPER_ADMIN_BASE, USER_BASE } from '../../routes/commonRoutes';
 
 export default function Login() {
   const [show, setShow] = useState(false);
@@ -146,8 +148,16 @@ export default function Login() {
               </Button>
             </Stack>
           </Stack>
+
+          <HStack align={'center'} mt={'2'}>
+            <Heading fontSize={'sm'}>Dont have account ? </Heading>
+              <ChakraLink  color='teal.500' as={ReactRouterLink} to={REGISTER}>
+                Sign up
+              </ChakraLink>
+          </HStack>
         </Box>
         </form>
+        
       </Stack>
     </Flex>
   )

@@ -3,6 +3,7 @@ export const LOGIN = '/login';
 export const FORGOT = '/forgot/password';
 export const RESET_PASSWORD = '/reset/password/:reset_token';
 export const UNAUTHORIZED = '/unauthorized';
+export const REGISTER = '/register';
 
 export const SUPER_ADMIN_BASE = '/super/admin';
 export const ADMIN_BASE = '/admin';

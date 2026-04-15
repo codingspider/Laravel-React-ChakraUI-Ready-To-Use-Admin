@@ -1,68 +1,33 @@
-import React, { useState } from "react";
-import {
-    Box,
-    Drawer,
-    DrawerContent,
-    useDisclosure,
-    useColorModeValue,
-    useMediaQuery,
-} from "@chakra-ui/react";
+import React, { useState } from 'react';
+import { Flex, Box, useColorModeValue } from '@chakra-ui/react';
+import SidebarContent from './SidebarContent';
+import TopNav from './TopNav';
+import Dashboard from '../dashboard/Dashboard';
 
-import TopNav from "./TopNav";
-import SidebarContent from "./SidebarContent";
-import { Outlet } from "react-router-dom";
-
-const MainLayout = () => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const [collapsed, setCollapsed] = useState(false);
-
-    const [isMobile] = useMediaQuery("(max-width: 768px)");
+export default function MainLayout() {
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    
+    const sidebarW = isCollapsed ? '80px' : '260px';
 
     return (
-        <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
-
-            {/* ================= DESKTOP SIDEBAR ================= */}
-            {!isMobile && (
-                <SidebarContent
-                    collapsed={collapsed}
-                    setCollapsed={setCollapsed}
-                />
-            )}
-
-            {/* ================= MOBILE DRAWER ================= */}
-            {isMobile && (
-                <Drawer isOpen={isOpen} placement="left" onClose={onClose} >
-                    <DrawerContent maxW="225px">
-                        <SidebarContent
-                            onClose={onClose}
-                            collapsed={false}
-                        />
-                    </DrawerContent>
-                </Drawer>
-            )}
-
-            {/* ================= TOP NAV ================= */}
-            <TopNav
-                onOpen={onOpen}
-                collapsed={collapsed}
+        <Flex h="100vh" overflow="hidden">
+            {/* Sidebar */}
+            <SidebarContent 
+                isCollapsed={isCollapsed} 
+                setIsCollapsed={setIsCollapsed} 
+                isMobileOpen={isMobileOpen} 
+                setIsMobileOpen={setIsMobileOpen} 
             />
 
-            {/* ================= CONTENT ================= */}
-            <Box
-                ml={
-                    isMobile
-                        ? 0
-                        : collapsed
-                            ? "80px"
-                            : "238px"
-                }
-                p={6}
-                transition="0.3s"
-            >
-                <Outlet />
+            {/* Main Area */}
+            <Box flex="1" ml={{ base: 0, lg: sidebarW }} transition="margin-left 0.3s ease" overflowY="auto">
+                {/* Top Navigation */}
+                <TopNav onMobileMenuOpen={() => setIsMobileOpen(true)} />
+                
+                {/* Dashboard Main Content */}
+                <Dashboard />
             </Box>
-        </Box>
+        </Flex>
     );
-};
-
-export default MainLayout;
+}
