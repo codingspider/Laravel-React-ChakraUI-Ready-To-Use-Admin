@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CashRegister extends Model
+class InvoiceScheme extends Model
 {
     protected $guarded =['id'];
 }

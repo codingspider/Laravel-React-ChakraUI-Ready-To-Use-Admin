@@ -10,14 +10,14 @@ import {
     LayoutDashboard, Users, ShoppingCart, TrendingUp, Settings,
     ChevronsLeft, ChevronRight
 } from 'lucide-react';
-import { SUPERADMIN_DASHBOARD_PATH } from '../../routes/superAdminRoutes';
+import { SUPERADMIN_DASHBOARD_PATH, USER_LIST_PATH } from '../../routes/superAdminRoutes';
 
 const navItems = [
     { path: SUPERADMIN_DASHBOARD_PATH, icon: LayoutDashboard, label: 'Dashboard' },
     {
-        icon: Users, label: 'Management',
+        icon: Users, label: 'User Management',
         children: [
-            { path: '/users', label: 'All Users' },
+            { path: USER_LIST_PATH, label: 'All Users' },
             { path: '/roles', label: 'Roles & Permissions' },
             { path: '/teams', label: 'Teams' }
         ]
@@ -41,6 +41,7 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
     const bg = useColorModeValue('white', 'gray.800');
     const shadow = useColorModeValue('soft', 'softDark');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
+    const hoverBg = useColorModeValue('gray.100', 'gray.700'); // ✅ added once
 
     const checkActive = (path) => location.pathname === path;
 
@@ -58,7 +59,7 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
             if (hasChildren) {
                 return (
                     <Tooltip key={item.label} label={item.label} placement="right" hasArrow>
-                        <Flex align="center" justify="center" px="0" py="3" borderRadius="lg" cursor="pointer" color="gray.500" _hover={{ bg: useColorModeValue('gray.100', 'gray.700'), color: 'gray.700' }} transition="0.2s" _dark={{ _hover: { color: 'white' } }}>
+                        <Flex align="center" justify="center" px="0" py="3" borderRadius="lg" cursor="pointer" color="gray.500" _hover={{ bg: hoverBg, color: 'gray.700' }} transition="0.2s" _dark={{ _hover: { color: 'white' } }}>
                             <Icon as={item.icon} boxSize={5} flexShrink={0} />
                         </Flex>
                     </Tooltip>
@@ -67,7 +68,7 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
             return (
                 <Tooltip key={item.label} label={item.label} placement="right" hasArrow>
                     <ChakraLink as={ReactRouterLink} to={item.path} _hover={{ textDecoration: 'none' }}>
-                        <Flex align="center" justify="center" px="0" py="3" borderRadius="lg" bg={isActive ? 'brand.50' : 'transparent'} color={isActive ? 'brand.600' : 'gray.500'} _hover={{ bg: isActive ? 'brand.50' : useColorModeValue('gray.100', 'gray.700'), color: isActive ? 'brand.600' : 'gray.700' }} transition="0.2s" _dark={{ _hover: { color: 'white' } }}>
+                        <Flex align="center" justify="center" px="0" py="3" borderRadius="lg" bg={isActive ? 'brand.50' : 'transparent'} color={isActive ? 'brand.600' : 'gray.500'} _hover={{ bg: isActive ? 'brand.50' : hoverBg, color: isActive ? 'brand.600' : 'gray.700' }} transition="0.2s" _dark={{ _hover: { color: 'white' } }}>
                             <Icon as={item.icon} boxSize={5} flexShrink={0} />
                         </Flex>
                     </ChakraLink>
@@ -82,7 +83,7 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
                     <Flex
                         align="center" px="4" py="3" w="100%" borderRadius="lg" cursor="pointer"
                         color="gray.500"
-                        _hover={{ bg: useColorModeValue('gray.100', 'gray.700'), color: 'gray.700' }}
+                        _hover={{ bg: hoverBg, color: 'gray.700' }}
                         transition="0.2s" fontWeight="500" fontSize="sm"
                         onClick={() => toggleMenu(item.label)}
                         justifyContent="space-between"
@@ -105,7 +106,7 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
                                             align="center" px="4" py="2.5" borderRadius="lg" cursor="pointer"
                                             bg={isChildActive ? 'brand.50' : 'transparent'}
                                             color={isChildActive ? 'brand.600' : 'gray.500'}
-                                            _hover={{ bg: isChildActive ? 'brand.50' : useColorModeValue('gray.100', 'gray.700'), color: isChildActive ? 'brand.600' : 'gray.700' }}
+                                            _hover={{ bg: isChildActive ? 'brand.50' : hoverBg, color: isChildActive ? 'brand.600' : 'gray.700' }}
                                             transition="0.2s" fontSize="sm" fontWeight="normal"
                                             _dark={{ _hover: { color: 'white' } }}
                                         >
@@ -127,7 +128,7 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
                         align="center" px="4" py="3" w="100%" borderRadius="lg" cursor="pointer"
                         bg={isActive ? 'brand.50' : 'transparent'}
                         color={isActive ? 'brand.600' : 'gray.500'}
-                        _hover={{ bg: isActive ? 'brand.50' : useColorModeValue('gray.100', 'gray.700'), color: isActive ? 'brand.600' : 'gray.700' }}
+                        _hover={{ bg: isActive ? 'brand.50' : hoverBg, color: isActive ? 'brand.600' : 'gray.700' }}
                         transition="0.2s" fontWeight="500" fontSize="sm"
                         _dark={{ _hover: { color: 'white' } }}
                     >

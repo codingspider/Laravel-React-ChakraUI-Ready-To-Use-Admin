@@ -630,3 +630,9 @@ function getBranchIds()
 
     return [$user->branch_id];
 }
+
+function payment_types()
+{
+    $payment_types = ['cash' => 'Cash', 'card' => 'Card', 'cheque' => 'Check', 'bank_transfer' => 'Bank Transfer', 'other' => 'Other'];
+    return $payment_types;
+}

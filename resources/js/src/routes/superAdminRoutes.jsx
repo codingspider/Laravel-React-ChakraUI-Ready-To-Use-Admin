@@ -44,7 +44,7 @@ export const BUSINESS_ADD_PATH = `${SUPER_ADMIN_BASE}/business/create`;
 export const BUSINESS_EDIT_PATH = (id) => `${SUPER_ADMIN_BASE}/business/edit/${id}`;
 
 export const superAdminRoutes = [
-    { path: DASHBOARD, element: <ProtectedRoute role="superadmin"><Dashboard /></ProtectedRoute> },
+    { path: SUPERADMIN_DASHBOARD_PATH, element: <ProtectedRoute role="superadmin"><Dashboard /></ProtectedRoute> },
     { path: "settings", element: <ProtectedRoute role="superadmin"><MasterSetting /></ProtectedRoute> },
     { path: "save/order", element: <ProtectedRoute role="superadmin"><SaveOrder /></ProtectedRoute> },
 

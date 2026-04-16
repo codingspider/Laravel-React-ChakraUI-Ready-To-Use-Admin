@@ -3,6 +3,9 @@ import { Flex, HStack, Icon, Avatar, Button, Input, InputGroup, InputLeftElement
 import { Search, Bell, Sun, Moon, Settings, LogOut, LayoutDashboard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from './../../LanguageProvider';
+import { useNavigate } from 'react-router-dom';
+import api from '../../axios';
+import { LOGIN } from '../../routes/commonRoutes';
 
 const ThemeToggle = () => {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -32,22 +35,69 @@ const ThemeToggle = () => {
     );
 };
 
-const ProfileMenu = () => (
-    <Menu>
-        <MenuButton as={Button} variant="ghost" p="1" borderRadius="lg">
-            <Avatar size="sm" name="Kent Dodds" src="https://bit.ly/kent-c-dodds" border="2px solid transparent" _hover={{ borderColor: 'brand.400' }} transition="0.2s" />
-        </MenuButton>
-        <MenuList align="center" w="56" boxShadow="lg" borderRadius="lg" border="1px solid" borderColor={useColorModeValue('gray.100', 'gray.700')} zIndex={99999}>
-            <div style={{ padding: '8px 16px 4px' }}>
-                <Text fontWeight="600" fontSize="sm">Kent Dodds</Text>
-                <Text fontSize="xs" color="gray.500">kent@example.com</Text>
-            </div>
-            <MenuDivider />
-            <MenuItem icon={<Icon as={Settings} boxSize={4} />}>Settings</MenuItem>
-            <MenuItem icon={<Icon as={LogOut} boxSize={4} />} color="red.500">Logout</MenuItem>
-        </MenuList>
-    </Menu>
-);
+function ProfileMenu() {
+
+    const navigate = useNavigate();
+
+    // logout function
+    const handleLogout = async () => {
+        try {
+            const res = await api.post("/superadmin/logout");
+
+            // frontend cleanup
+            localStorage.removeItem("role");
+            localStorage.removeItem("auth_token");
+
+            navigate(LOGIN, { replace: true });
+        } catch (error) {
+            console.log("Logout failed, clearing frontend anyway");
+        }
+    };
+
+    return (
+        <Menu>
+            <MenuButton as={Button} variant="ghost" p="1" borderRadius="lg">
+                <Avatar
+                    size="sm"
+                    name="Kent Dodds"
+                    src="https://bit.ly/kent-c-dodds"
+                    border="2px solid transparent"
+                    _hover={{ borderColor: 'brand.400' }}
+                    transition="0.2s"
+                />
+            </MenuButton>
+
+            <MenuList
+                align="center"
+                w="56"
+                boxShadow="lg"
+                borderRadius="lg"
+                border="1px solid"
+                borderColor={useColorModeValue('gray.100', 'gray.700')}
+                zIndex={99999}
+            >
+                <div style={{ padding: '8px 16px 4px' }}>
+                    <Text fontWeight="600" fontSize="sm">Kent Dodds</Text>
+                    <Text fontSize="xs" color="gray.500">kent@example.com</Text>
+                </div>
+
+                <MenuDivider />
+
+                <MenuItem icon={<Icon as={Settings} boxSize={4} />}>
+                    Settings
+                </MenuItem>
+
+                <MenuItem
+                    icon={<Icon as={LogOut} boxSize={4} />}
+                    onClick={handleLogout}
+                    color="red.500"
+                >
+                    Logout
+                </MenuItem>
+            </MenuList>
+        </Menu>
+    );
+}
 
 export default function TopNav({ onMobileMenuOpen }) {
     const bg = useColorModeValue('white', 'gray.800');

@@ -1,20 +1,20 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\API\Admin\AddonController;
+use App\Http\Controllers\API\Admin\BusinessController as AdminBusinessController;
+use App\Http\Controllers\API\Admin\CategoryController;
+use App\Http\Controllers\API\Admin\ProductController;
+use App\Http\Controllers\API\Admin\VariationController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\BranchController;
+use App\Http\Controllers\API\BusinessController;
+use App\Http\Controllers\API\GeneralController;
+use App\Http\Controllers\API\PLanController;
+use App\Http\Controllers\API\RegisterController;
+use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\VatController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\VatController;
-use App\Http\Controllers\API\PLanController;
-use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\API\BranchController;
-use App\Http\Controllers\API\GeneralController;
-use App\Http\Controllers\API\BusinessController;
-use App\Http\Controllers\API\RegisterController;
-use App\Http\Controllers\API\Admin\AddonController;
-use App\Http\Controllers\API\Admin\ProductController;
-use App\Http\Controllers\API\Admin\CategoryController;
-use App\Http\Controllers\API\Admin\VariationController;
-use App\Http\Controllers\API\Admin\BusinessController as AdminBusinessController;
 
 
 Route::controller(RegisterController::class)->group(function(){
@@ -22,6 +22,7 @@ Route::controller(RegisterController::class)->group(function(){
     Route::post('login', 'login');
     Route::post('forgot-password', 'forgotPassword');
     Route::post('reset-password', 'resetPassword');
+    Route::post('store/business/info', 'storeBusinessInfo');
 });
 
 Route::middleware(['auth:sanctum'])->prefix('superadmin')->group(function () {
@@ -32,6 +33,8 @@ Route::middleware(['auth:sanctum'])->prefix('superadmin')->group(function () {
     Route::resource('business', BusinessController::class);
 
     Route::get('get/all/plans', [GeneralController::class, 'getAllPlan']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 Route::middleware(['auth:sanctum', 'check_active_business'])->prefix('admin')->group(function () {

@@ -14,9 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('business_locations', function (Blueprint $table) {
-            $table->integer('invoice_scheme_id')->unsigned()->after('zip_code');
+            $table->integer('invoice_scheme_id')->nullable()->unsigned()->after('zip_code');
             $table->foreign('invoice_scheme_id')->references('id')->on('invoice_schemes')->onDelete('cascade');
-            $table->integer('invoice_layout_id')->unsigned()->after('invoice_scheme_id');
+            $table->integer('invoice_layout_id')->nullable()->unsigned()->after('invoice_scheme_id');
             $table->foreign('invoice_layout_id')->references('id')->on('invoice_layouts')->onDelete('cascade');
         });
     }

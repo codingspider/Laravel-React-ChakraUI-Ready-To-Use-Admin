@@ -3,6 +3,7 @@ import { Flex, Box, useColorModeValue } from '@chakra-ui/react';
 import SidebarContent from './SidebarContent';
 import TopNav from './TopNav';
 import Dashboard from '../dashboard/Dashboard';
+import { Outlet } from "react-router-dom";
 
 export default function MainLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -15,7 +16,7 @@ export default function MainLayout() {
             {/* Sidebar */}
             <SidebarContent 
                 isCollapsed={isCollapsed} 
-                setIsCollapsed={setIsCollapsed} 
+                setIsCollapsed={setIsCollapsed}
                 isMobileOpen={isMobileOpen} 
                 setIsMobileOpen={setIsMobileOpen} 
             />
@@ -26,7 +27,9 @@ export default function MainLayout() {
                 <TopNav onMobileMenuOpen={() => setIsMobileOpen(true)} />
                 
                 {/* Dashboard Main Content */}
-                <Dashboard />
+                <Box p={5}>
+                <Outlet> </Outlet>
+                </Box>
             </Box>
         </Flex>
     );

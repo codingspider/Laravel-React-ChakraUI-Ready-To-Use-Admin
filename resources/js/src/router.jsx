@@ -8,10 +8,10 @@ import MainLayout from "./components/layouts/MainLayout";
 import ErrorPage from "./components/pages/ErrorPage";
 import Register from "./components/auth/Register";
 import Dashboard from "./components/dashboard/Dashboard";
-
 import { superAdminRoutes } from "./routes/superAdminRoutes";
 import { SUPER_ADMIN_BASE, LOGIN, ROOT, UNAUTHORIZED, FORGOT, RESET_PASSWORD, ADMIN_BASE, REGISTER, DASHBOARD } from "./routes/commonRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
+import ProtectedRoute from "./ProtectedRoute";
 
 const router = createBrowserRouter([
   { path: LOGIN, element: <Login /> },
@@ -25,10 +25,15 @@ const router = createBrowserRouter([
   // SUPER ADMIN ROUTES
   {
     path: SUPER_ADMIN_BASE,
-    element: <MainLayout />,
+    element: (
+      <ProtectedRoute role="superadmin">
+        <MainLayout />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
     children: superAdminRoutes,
   },
+
 
   // Admin Routes 
   {

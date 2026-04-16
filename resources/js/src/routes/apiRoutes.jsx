@@ -8,6 +8,7 @@ export const STORE_BUSINESS = 'superadmin/business';
 export const LIST_BUSINESS = 'superadmin/business';
 export const GET_CURRENCIES = 'get/currencies';
 export const GET_TIMEZONES = 'get/timezones';
+export const STORE_BUSINESS_INFO = 'store/business/info';
 
 export const GET_ALL_PLANS = 'superadmin/get/all/plans';
 export const GET_ALL_BRANCHES = 'get/branches';

@@ -14,9 +14,12 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Traits\BusinessTrait;
 
 class RegisterController extends BaseController
 {
+    use BusinessTrait;
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -38,6 +41,105 @@ class RegisterController extends BaseController
         $success['name'] =  $user->name;
    
         return $this->sendResponse($success, 'User register successfully.');
+    }
+    
+    
+    public function storeBusinessInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'currency' => 'required|numeric',
+            'country' => 'required|max:255',
+            'state' => 'required|max:255',
+            'city' => 'required|max:255',
+            'zip_code' => 'required|max:255',
+            'address' => 'required|max:255',
+            'time_zone' => 'nullable|max:255',
+            'email' => 'sometimes|nullable|email|unique:users|max:255',
+            'first_name' => 'required|max:255',
+            'username' => 'required|min:4|max:255|unique:users',
+            'password' => 'required|min:4|max:255',
+            'fy_start_month' => 'required',
+            'accounting_method' => 'required',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Owner details
+            $owner_details = $request->only([
+                'first_name',
+                'last_name',
+                'username',
+                'email',
+                'password',
+                'language'
+            ]);
+
+            $owner_details['language'] = empty($owner_details['language'])
+                ? config('app.locale')
+                : $owner_details['language'];
+
+            $owner_details['role'] = 'superadmin';
+
+            $user = User::create($owner_details);
+
+            // Business details
+            $business_details = $request->only([
+                'name',
+                'start_date',
+                'time_zone',
+                'fy_start_month',
+                'accounting_method'
+            ]);
+
+            $business_details['currency_id'] = $request->currency;
+            $business_details['owner_id'] = $user->id;
+            $business_details['stop_selling_before'] = 0;
+            $business_details['weighing_scale_setting'] = '';
+
+            $business = $this->createNewBusiness($business_details);
+
+            // Update user with business ID
+            $user->business_id = $business->id;
+            $user->save();
+
+            // Location
+            $business_location = $request->only([
+                'name',
+                'country',
+                'state',
+                'city',
+                'zip_code',
+            ]);
+
+            $business_location['landmark'] = $request->address;
+
+            $new_location = $this->addLocation($business->id, $business_location);
+
+            DB::commit();
+
+            return $this->sendResponse($business, 'Business registered successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Log error (VERY IMPORTANT)
+            \Log::error('Business Registration Failed: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
    
     /**
