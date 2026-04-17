@@ -164,6 +164,7 @@ class RegisterController extends BaseController
             $success['token'] =  $user->createToken('MyApp')->plainTextToken; 
             $success['name'] =  $user->name;
             $success['role'] =  $user->role;
+            $success['permissions'] = $user->getAllPermissions()->pluck('name');
 
             $user->last_login_at = now();
             $user->save();

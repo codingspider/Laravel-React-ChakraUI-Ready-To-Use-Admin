@@ -81,3 +81,11 @@ Route::get('/translations', function (\Illuminate\Http\Request $request) {
         'messages' => $translations
     ]);
 });
+
+
+Route::middleware('auth:sanctum')->get('/me', function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'user' => $request->user(),
+        'permissions' => $request->user()->getAllPermissions()->pluck('name')
+    ]);
+});

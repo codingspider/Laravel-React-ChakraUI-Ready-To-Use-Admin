@@ -26,6 +26,7 @@ import { loginUser } from '../../services/authService';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { ADMIN_BASE, DASHBOARD, FORGOT, REGISTER, STAFF_BASE, SUPER_ADMIN_BASE, USER_BASE } from '../../routes/commonRoutes';
+import { usePermission } from '../../context/PermissionContext';
 
 export default function Login() {
   const [show, setShow] = useState(false);
@@ -34,6 +35,8 @@ export default function Login() {
   const navigate = useNavigate();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {setUserPermission} = usePermission();
 
   useEffect(() => {
       const storedToken = localStorage.getItem('auth_token');
@@ -65,6 +68,9 @@ export default function Login() {
                 duration: 3000,
                 isClosable: true,
             });
+
+            setUserPermission(res.data);
+
             if (res.data.token && res.data.role === 'superadmin') {
                 navigate(`${SUPER_ADMIN_BASE}/${DASHBOARD}`);
             } else if (res.data.token && res.data.role === 'admin') {

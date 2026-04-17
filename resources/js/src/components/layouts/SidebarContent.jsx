@@ -8,40 +8,53 @@ import { Link as ChakraLink } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
 import {
     LayoutDashboard, Users, ShoppingCart, TrendingUp, Settings,
-    ChevronsLeft, ChevronRight
+    ChevronsLeft, ChevronRight,
+    Package
 } from 'lucide-react';
 import { SUPERADMIN_DASHBOARD_PATH, USER_LIST_PATH } from '../../routes/superAdminRoutes';
+import { usePermission } from '../../context/PermissionContext';
 
 const navItems = [
-    { path: SUPERADMIN_DASHBOARD_PATH, icon: LayoutDashboard, label: 'Dashboard' },
+    // Added 'permission' key to items. 
+    { 
+        path: SUPERADMIN_DASHBOARD_PATH, 
+        icon: LayoutDashboard, 
+        label: 'Admin Dashboard',
+        permission: 'dashboard.data' 
+    },
     {
-        icon: Users, label: 'User Management',
+        icon: Users, 
+        label: 'User Management',
         children: [
-            { path: USER_LIST_PATH, label: 'All Users' },
-            { path: '/roles', label: 'Roles & Permissions' },
-            { path: '/teams', label: 'Teams' }
+            { path: USER_LIST_PATH, label: 'All Users', permission: 'user.view' },
+            { path: '/roles', label: 'Roles & Permissions', permission: 'manage roles' },
+            { path: '/teams', label: 'Teams', permission: 'manage teams' }
         ]
     },
     {
-        icon: ShoppingCart, label: 'E-Commerce',
+        icon: Package, 
+        label: 'Product Management',
         children: [
-            { path: '/products', label: 'Products' },
-            { path: '/orders', label: 'Orders' },
-            { path: '/inventory', label: 'Inventory' }
+            { path: '/products', label: 'Products', permission: 'product.view' },
+            { path: '/orders', label: 'Orders', permission: 'view orders' },
+            { path: '/inventory', label: 'Inventory', permission: 'manage inventory' }
         ]
     },
-    { path: '/analytics', icon: TrendingUp, label: 'Analytics' },
-    { path: '/settings', icon: Settings, label: 'Settings' },
+    { path: '/analytics', icon: TrendingUp, label: 'Analytics', permission: 'view analytics' },
+    { path: '/settings', icon: Settings, label: 'Settings', permission: 'manage settings' },
 ];
 
 export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) {
+    // 2. Destructure the 'can' function from your hook
+    const { can } = usePermission(); 
+
     const [openMenus, setOpenMenus] = useState({});
     const location = useLocation();
 
     const bg = useColorModeValue('white', 'gray.800');
     const shadow = useColorModeValue('soft', 'softDark');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
-    const hoverBg = useColorModeValue('gray.100', 'gray.700'); // ✅ added once
+    const hoverBg = useColorModeValue('gray.100', 'gray.700');
 
     const checkActive = (path) => location.pathname === path;
 
@@ -50,6 +63,12 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
     };
 
     const renderNavItem = (item, isMobile = false) => {
+        // 🔒 3. SECURITY CHECK: Simple Item
+        // If item has a permission and user doesn't have it, return null immediately
+        if (item.permission && !can(item.permission)) {
+            return null;
+        }
+
         const hasChildren = item.children && item.children.length > 0;
         const isOpen = openMenus[item.label];
         const isActive = checkActive(item.path);
@@ -57,6 +76,11 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
         // Collapsed Desktop View
         if (!isMobile && isCollapsed) {
             if (hasChildren) {
+                // 🔒 4. SECURITY CHECK: Parent Item (Collapsed)
+                // Even if collapsed, don't show the icon if they can't access ANY children
+                const hasAccessToChildren = item.children.some(child => !child.permission || can(child.permission));
+                if (!hasAccessToChildren) return null;
+
                 return (
                     <Tooltip key={item.label} label={item.label} placement="right" hasArrow>
                         <Flex align="center" justify="center" px="0" py="3" borderRadius="lg" cursor="pointer" color="gray.500" _hover={{ bg: hoverBg, color: 'gray.700' }} transition="0.2s" _dark={{ _hover: { color: 'white' } }}>
@@ -78,6 +102,15 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
 
         // Expanded / Mobile View
         if (hasChildren) {
+            // 🔒 5. SECURITY CHECK: Filter Children
+            // Create a new list of children containing only those the user is allowed to see
+            const visibleChildren = item.children.filter(child => !child.permission || can(child.permission));
+
+            // If NO children are visible, hide the entire parent menu
+            if (visibleChildren.length === 0) {
+                return null;
+            }
+
             return (
                 <Box key={item.label} w="100%">
                     <Flex
@@ -98,7 +131,8 @@ export default function SidebarContent({ isCollapsed, setIsCollapsed, isMobileOp
 
                     {isOpen && (
                         <VStack spacing="1" pl="12" pt="1" align="stretch">
-                            {item.children.map((child) => {
+                            {/* 🔒 6. Render only the visibleChildren, not all children */}
+                            {visibleChildren.map((child) => {
                                 const isChildActive = checkActive(child.path);
                                 return (
                                     <ChakraLink key={child.path} as={ReactRouterLink} to={child.path} onClick={() => isMobile && setIsMobileOpen(false)} _hover={{ textDecoration: 'none' }}>

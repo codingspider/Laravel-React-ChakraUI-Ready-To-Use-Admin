@@ -3,48 +3,65 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        // 🔹 1. Define permissions
+        $permissions = Permission::all();
+
+        // 🔹 3. Create role
+        $superAdminRole = Role::firstOrCreate(['name' => 'superadmin', 'business_id' => 1]);
+
+        // 🔹 4. Assign ALL permissions to superadmin
+        $superAdminRole->syncPermissions($permissions);
+
+        // 🔹 5. Users data
         $users = [
             [
-                'name' => 'Super Admin',
+                'first_name' => 'Super Admin',
                 'username' => 'superadmin',
-                'user_type' => 'superadmin',
                 'role' => 'superadmin',
                 'email' => 'superadmin@gmail.com',
-                'email_verified_at' => now(),
                 'last_login_at' => now(),
                 'password' => Hash::make('123456789'),
-                'allow_login' => 1
-                
+                'allow_login' => 1,
+                'business_id' => 1
             ],
             [
-                'name' => 'Admin User',
+                'first_name' => 'Admin User',
                 'username' => 'admin',
-                'user_type' => 'admin',
+                'role' => 'admin',
                 'email' => 'admin@gmail.com',
-                'email_verified_at' => now(),
                 'last_login_at' => now(),
                 'password' => Hash::make('123456789'),
-                'role' => 'admin',
-                'allow_login' => 1
+                'allow_login' => 1,
+                'business_id' => 1
             ],
         ];
 
-        foreach ($users as $user) {
-            User::updateOrCreate(
-                ['email' => $user['email']],
-                $user
+        // 🔹 6. Create users + assign roles
+        foreach ($users as $userData) {
+
+            $user = User::updateOrCreate(
+                ['email' => $userData['email']],
+                $userData
             );
+
+            // Assign role based on user_type or email
+            if ($userData['email'] === 'superadmin@gmail.com') {
+                $user->assignRole('superadmin');
+            } else {
+                $role = Role::firstOrCreate(['name' => 'admin']);
+                $role->givePermissionTo(['view dashboard', 'view reports']);
+                $user->assignRole('admin');
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import { LanguageProvider } from './LanguageProvider';
 import useOnlineSync from './hooks/useOnlineSync';
 import 'virtual:pwa-register';
 import theme from './theme';
+import { PermissionProvider } from './context/PermissionContext';
 
 
 function App() {
@@ -15,10 +16,12 @@ function App() {
 
   return (
     <ChakraProvider theme={theme}>
-      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      <LanguageProvider api={api}>
-        <RouterProvider router={router} />
-      </LanguageProvider>
+      <PermissionProvider>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <LanguageProvider api={api}>
+          <RouterProvider router={router} />
+        </LanguageProvider>
+      </PermissionProvider>
     </ChakraProvider>
   );
 }
