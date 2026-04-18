@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->integer('business_id')->unsigned();
             $table->foreign('business_id')->references('id')->on('business')->onDelete('cascade');
-            $table->string('short_code')->nullable();
-            $table->integer('parent_id');
+            $table->string('image')->nullable();
+            $table->integer('parent_id')->nullable();
             $table->integer('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->softDeletes();

@@ -35,12 +35,6 @@ export const GET_BRANCH_VARIATIONS = 'admin/get/all/variations';
 export const GET_ALL_CATEGROIES = 'admin/get/all/categories';
 
 
-export const STORE_CATEGORY = 'admin/categories';
-export const LIST_CATEGORY = 'admin/categories';
-export const DELETE_CATEGORY = (id) => `admin/categories/${id}`;
-export const UPDATE_CATEGORY = (id) => `admin/categories/${id}`;
-
-
 export const STORE_ADDON = 'admin/addons';
 export const LIST_ADDON = 'admin/addons';
 export const DELETE_ADDON = (id) => `admin/addons/${id}`;
@@ -56,3 +50,10 @@ export const STORE_ITEM = 'admin/products';
 export const LIST_ITEM = 'admin/products';
 export const DELETE_ITEM = (id) => `admin/products/${id}`;
 export const UPDATE_ITEM = (id) => `admin/products/${id}`;
+
+
+export const STORE_CATEGORY = 'admin/categories';
+export const LIST_CATEGORY = 'admin/categories';
+export const DELETE_CATEGORY = (id) => `admin/categories/${id}`;
+export const UPDATE_CATEGORY = (id) => `admin/categories/${id}`;
+export const GET_EDIT_CATEGORY = (id) => `admin/categories/${id}`;

@@ -15,72 +15,87 @@ class PermissionsTableSeeder extends Seeder
     public function run()
     {
         $data = [
-            ['name' => 'user.view'],
-            ['name' => 'user.create'],
-            ['name' => 'user.update'],
-            ['name' => 'user.delete'],
+            // User
+            ['name' => 'view_user'],
+            ['name' => 'create_user'],
+            ['name' => 'update_user'],
+            ['name' => 'delete_user'],
 
-            ['name' => 'supplier.view'],
-            ['name' => 'supplier.create'],
-            ['name' => 'supplier.update'],
-            ['name' => 'supplier.delete'],
+            // Supplier
+            ['name' => 'view_supplier'],
+            ['name' => 'create_supplier'],
+            ['name' => 'update_supplier'],
+            ['name' => 'delete_supplier'],
 
-            ['name' => 'customer.view'],
-            ['name' => 'customer.create'],
-            ['name' => 'customer.update'],
-            ['name' => 'customer.delete'],
+            // Customer
+            ['name' => 'view_customer'],
+            ['name' => 'create_customer'],
+            ['name' => 'update_customer'],
+            ['name' => 'delete_customer'],
 
-            ['name' => 'product.view'],
-            ['name' => 'product.create'],
-            ['name' => 'product.update'],
-            ['name' => 'product.delete'],
+            // Product
+            ['name' => 'view_product'],
+            ['name' => 'create_product'],
+            ['name' => 'update_product'],
+            ['name' => 'delete_product'],
 
-            ['name' => 'purchase.view'],
-            ['name' => 'purchase.create'],
-            ['name' => 'purchase.update'],
-            ['name' => 'purchase.delete'],
+            // Purchase
+            ['name' => 'view_purchase'],
+            ['name' => 'create_purchase'],
+            ['name' => 'update_purchase'],
+            ['name' => 'delete_purchase'],
 
-            ['name' => 'sell.view'],
-            ['name' => 'sell.create'],
-            ['name' => 'sell.update'],
-            ['name' => 'sell.delete'],
+            // Sell
+            ['name' => 'view_sale'],
+            ['name' => 'create_sale'],
+            ['name' => 'update_sale'],
+            ['name' => 'delete_sale'],
 
-            ['name' => 'purchase_n_sell_report.view'],
-            ['name' => 'contacts_report.view'],
-            ['name' => 'stock_report.view'],
-            ['name' => 'tax_report.view'],
-            ['name' => 'trending_product_report.view'],
-            ['name' => 'register_report.view'],
-            ['name' => 'sales_representative.view'],
-            ['name' => 'expense_report.view'],
+            // Reports
+            ['name' => 'view_purchase_sale_report'],
+            ['name' => 'view_contacts_report'],
+            ['name' => 'view_stock_report'],
+            ['name' => 'view_tax_report'],
+            ['name' => 'view_trending_product_report'],
+            ['name' => 'view_register_report'],
+            ['name' => 'view_sales_representative'],
+            ['name' => 'view_expense_report'],
 
-            ['name' => 'business_settings.access'],
-            ['name' => 'barcode_settings.access'],
-            ['name' => 'invoice_settings.access'],
+            // Settings
+            ['name' => 'access_business_settings'],
+            ['name' => 'access_barcode_settings'],
+            ['name' => 'access_invoice_settings'],
 
-            ['name' => 'brand.view'],
-            ['name' => 'brand.create'],
-            ['name' => 'brand.update'],
-            ['name' => 'brand.delete'],
+            // Brand
+            ['name' => 'view_brand'],
+            ['name' => 'create_brand'],
+            ['name' => 'update_brand'],
+            ['name' => 'delete_brand'],
 
-            ['name' => 'tax_rate.view'],
-            ['name' => 'tax_rate.create'],
-            ['name' => 'tax_rate.update'],
-            ['name' => 'tax_rate.delete'],
+            // Tax Rate
+            ['name' => 'view_tax_rate'],
+            ['name' => 'create_tax_rate'],
+            ['name' => 'update_tax_rate'],
+            ['name' => 'delete_tax_rate'],
 
-            ['name' => 'unit.view'],
-            ['name' => 'unit.create'],
-            ['name' => 'unit.update'],
-            ['name' => 'unit.delete'],
+            // Unit
+            ['name' => 'view_unit'],
+            ['name' => 'create_unit'],
+            ['name' => 'update_unit'],
+            ['name' => 'delete_unit'],
 
-            ['name' => 'category.view'],
-            ['name' => 'category.create'],
-            ['name' => 'category.update'],
-            ['name' => 'category.delete'],
-            ['name' => 'expense.access'],
+            // Category
+            ['name' => 'view_category'],
+            ['name' => 'create_category'],
+            ['name' => 'update_category'],
+            ['name' => 'delete_category'],
 
+            // Expense
+            ['name' => 'access_expense'],
+
+            // Misc
             ['name' => 'access_all_locations'],
-            ['name' => 'dashboard.data'],
+            ['name' => 'view_dashboard_data'],
         ];
 
         $insert_data = [];

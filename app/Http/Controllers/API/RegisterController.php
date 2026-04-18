@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Traits\BusinessTrait;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RegisterController extends BaseController
 {
@@ -36,6 +38,14 @@ class RegisterController extends BaseController
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
+
+        $role = Role::where('name', 'superadmin')->first();
+        if ($role) {
+            $user->assignRole($role);
+        }
+
+        $permissions = Permission::all();
+        $user->syncPermissions($permissions);
 
         $success['token'] =  $user->createToken('MyApp')->plainTextToken;
         $success['name'] =  $user->name;
@@ -87,6 +97,14 @@ class RegisterController extends BaseController
             $owner_details['role'] = 'superadmin';
 
             $user = User::create($owner_details);
+
+            $role = Role::where('name', 'superadmin')->first();
+            if ($role) {
+                $user->assignRole($role);
+            }
+
+            $permissions = Permission::all();
+            $user->syncPermissions($permissions);
 
             // Business details
             $business_details = $request->only([

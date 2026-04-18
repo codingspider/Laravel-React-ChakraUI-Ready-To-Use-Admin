@@ -11,23 +11,22 @@ import {
     ChevronsLeft, ChevronRight,
     Package
 } from 'lucide-react';
-import { SUPERADMIN_DASHBOARD_PATH, USER_LIST_PATH } from '../../routes/superAdminRoutes';
+import { CATEGORY_LIST_PATH, SUPERADMIN_DASHBOARD_PATH, USER_LIST_PATH } from '../../routes/superAdminRoutes';
 import { usePermission } from '../../context/PermissionContext';
 
 const navItems = [
-    // Added 'permission' key to items. 
     { 
         path: SUPERADMIN_DASHBOARD_PATH, 
-        icon: LayoutDashboard, 
+        icon: LayoutDashboard,
         label: 'Admin Dashboard',
-        permission: 'dashboard.data' 
+        permission: 'view_dashboard_data' 
     },
     {
         icon: Users, 
         label: 'User Management',
         children: [
-            { path: USER_LIST_PATH, label: 'All Users', permission: 'user.view' },
-            { path: '/roles', label: 'Roles & Permissions', permission: 'manage roles' },
+            { path: USER_LIST_PATH, label: 'All Users', permission: 'view_user' },
+            { path: '/roles', label: 'Roles & Permissions', permission: 'roles.view' },
             { path: '/teams', label: 'Teams', permission: 'manage teams' }
         ]
     },
@@ -35,8 +34,8 @@ const navItems = [
         icon: Package, 
         label: 'Product Management',
         children: [
-            { path: '/products', label: 'Products', permission: 'product.view' },
-            { path: '/orders', label: 'Orders', permission: 'view orders' },
+            { path: '/products', label: 'Products', permission: 'view_product' },
+            { path: CATEGORY_LIST_PATH, label: 'Category', permission: 'view_category' },
             { path: '/inventory', label: 'Inventory', permission: 'manage inventory' }
         ]
     },
