@@ -111,7 +111,7 @@ export default function TopNav({ onMobileMenuOpen }) {
                 </Button>
                 <InputGroup maxW="md" display={{ base: 'none', sm: 'flex' }}>
                     <InputLeftElement pointerEvents="none"><Icon as={Search} color="gray.400" boxSize={4} /></InputLeftElement>
-                    <Input variant="filled" placeholder="Search transactions, customers..." borderRadius="xl" bg={useColorModeValue('gray.100', 'gray.700')} _focus={{ bg: useColorModeValue('white', 'gray.600'), borderColor: 'brand.400' }} border="1px" borderColor="transparent" />
+                    <Input variant="filled" placeholder="Search Menu" borderRadius="xl" bg={useColorModeValue('gray.100', 'gray.700')} _focus={{ bg: useColorModeValue('white', 'gray.600'), borderColor: 'brand.400' }} border="1px" borderColor="transparent" />
                 </InputGroup>
             </HStack>
             <HStack spacing="2">

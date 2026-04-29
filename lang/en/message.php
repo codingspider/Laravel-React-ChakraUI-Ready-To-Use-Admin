@@ -243,5 +243,10 @@ return [
     "create_item" => "Create Item",
     "add_variation" => "Add Variation",
     "add_add_on" => "Add Add-on",
+    "short_name" => "Short Name",
+    "allow_decimal" => "Allow Decimal",
+    "selection_summary" => "Selection Summary",
+    "role_name" => "Role Name",
+    "assign_permissions" => "Assign Permissions",
 
 ];

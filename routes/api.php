@@ -3,7 +3,9 @@
 use App\Http\Controllers\API\Admin\AddonController;
 use App\Http\Controllers\API\Admin\BusinessController as AdminBusinessController;
 use App\Http\Controllers\API\Admin\CategoryController;
+use App\Http\Controllers\API\Admin\RoleController;
 use App\Http\Controllers\API\Admin\ProductController;
+use App\Http\Controllers\API\Admin\UnitController;
 use App\Http\Controllers\API\Admin\VariationController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BranchController;
@@ -44,6 +46,8 @@ Route::middleware(['auth:sanctum', 'check_active_business'])->prefix('admin')->g
     Route::apiResource('addons', AddonController::class);
     Route::apiResource('variations', VariationController::class);
     Route::apiResource('products', ProductController::class);
+    Route::apiResource('units', UnitController::class);
+    Route::apiResource('roles', RoleController::class);
     
 
     Route::get('owner/business', [AdminBusinessController::class, 'index']);
@@ -89,3 +93,4 @@ Route::middleware('auth:sanctum')->get('/me', function (\Illuminate\Http\Request
         'permissions' => $request->user()->getAllPermissions()->pluck('name')
     ]);
 });
+

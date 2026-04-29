@@ -17,6 +17,13 @@ import CategoryList from "../components/superadmin/category/CategoryList";
 import CategoryCreate from "../components/superadmin/category/CategoryCreate";
 import CategoryEdit from "../components/superadmin/category/CategoryEdit";
 
+import UnitList from "../components/superadmin/unit/UnitList";
+import UnitCreate from "../components/superadmin/unit/UnitCreate";
+import UnitEdit from "../components/superadmin/unit/UnitEdit";
+
+import RoleList from "../components/superadmin/permission/List";
+import RoleCreat from "../components/superadmin/permission/Create";
+import RoleEdit from "../components/superadmin/permission/Edit";
 
 import { DASHBOARD, SUPER_ADMIN_BASE } from "./commonRoutes";
 
@@ -62,6 +69,23 @@ export const CATEGORY_LIST_PATH = `${SUPER_ADMIN_BASE}/category/list`;
 export const CATEGORY_ADD_PATH = `${SUPER_ADMIN_BASE}/category/create`;
 export const CATEGORY_EDIT_PATH = (id) => `${SUPER_ADMIN_BASE}/category/edit/${id}`;
 
+
+export const UNIT_LIST = "unit/list";
+export const UNIT_ADD = "unit/create";
+export const UNIT_EDIT = "unit/edit/:id";
+
+export const UNIT_LIST_PATH = `${SUPER_ADMIN_BASE}/unit/list`;
+export const UNIT_ADD_PATH = `${SUPER_ADMIN_BASE}/unit/create`;
+export const UNIT_EDIT_PATH = (id) => `${SUPER_ADMIN_BASE}/unit/edit/${id}`;
+
+export const ROLE_LIST = "role/list";
+export const ROLE_ADD = "role/create";
+export const ROLE_EDIT = "role/edit/:id";
+
+export const ROLE_LIST_PATH = `${SUPER_ADMIN_BASE}/role/list`;
+export const ROLE_ADD_PATH = `${SUPER_ADMIN_BASE}/role/create`;
+export const ROLE_EDIT_PATH = (id) => `${SUPER_ADMIN_BASE}/role/edit/${id}`;
+
 export const superAdminRoutes = [
     { path: SUPERADMIN_DASHBOARD_PATH, element: <ProtectedRoute role="superadmin"><Dashboard /></ProtectedRoute> },
     { path: "settings", element: <ProtectedRoute role="superadmin"><MasterSetting /></ProtectedRoute> },
@@ -82,4 +106,12 @@ export const superAdminRoutes = [
     { path: CATEGORY_LIST_PATH, element: <ProtectedRoute role="superadmin"><CategoryList /></ProtectedRoute> },
     { path: CATEGORY_ADD_PATH, element: <ProtectedRoute role="superadmin"><CategoryCreate /></ProtectedRoute> },
     { path: CATEGORY_EDIT, element: <ProtectedRoute role="superadmin"><CategoryEdit /></ProtectedRoute> },
+    
+    { path: UNIT_LIST_PATH, element: <ProtectedRoute role="superadmin"><UnitList /></ProtectedRoute> },
+    { path: UNIT_ADD_PATH, element: <ProtectedRoute role="superadmin"><UnitCreate /></ProtectedRoute> },
+    { path: UNIT_EDIT, element: <ProtectedRoute role="superadmin"><UnitEdit /></ProtectedRoute> },
+ 
+    { path: ROLE_LIST_PATH, element: <ProtectedRoute role="superadmin"><RoleList /></ProtectedRoute> },
+    { path: ROLE_ADD_PATH, element: <ProtectedRoute role="superadmin"><RoleCreat /></ProtectedRoute> },
+    { path: ROLE_EDIT, element: <ProtectedRoute role="superadmin"><RoleEdit /></ProtectedRoute> },
 ];

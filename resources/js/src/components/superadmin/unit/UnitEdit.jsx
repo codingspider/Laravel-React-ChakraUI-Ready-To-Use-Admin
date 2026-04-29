@@ -16,6 +16,7 @@ import {
     useToast,
     Flex,
     Text,
+    Select,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
@@ -23,10 +24,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Link as ReactRouterLink } from "react-router-dom";
 import api from "../../../axios";
-import { CATEGORY_LIST_PATH, SUPERADMIN_DASHBOARD_PATH } from "../../../routes/superAdminRoutes";
-import { GET_EDIT_CATEGORY, UPDATE_CATEGORY } from "../../../routes/apiRoutes";
+import { SUPERADMIN_DASHBOARD_PATH, UNIT_LIST_PATH } from "../../../routes/superAdminRoutes";
+import { GET_EDIT_UNIT, UPDATE_UNIT } from "../../../routes/apiRoutes";
 
-const CategoryEdit = () => {
+const UnitEdit = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const { t } = useTranslation();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,16 +39,7 @@ const CategoryEdit = () => {
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         try {
-            const formData = new FormData();
-            formData.append("name", data.name);
-            formData.append("description", data.description);
-            if (data.image && data.image.length > 0) {
-                formData.append("image", data.image[0]);
-            }
-
-            formData.append("_method", "PUT");
-
-            const res = await api.post(UPDATE_CATEGORY(id), formData);
+            const res = await api.put(UPDATE_UNIT(id), data);
             toast({
                 position: "bottom-right",
                 title: res.data.message,
@@ -55,7 +47,7 @@ const CategoryEdit = () => {
                 duration: 3000,
                 isClosable: true,
             });
-            navigate(CATEGORY_LIST_PATH);
+            navigate(UNIT_LIST_PATH);
         } catch (err) {
             const errorResponse = err?.response?.data;
             if (errorResponse?.errors) {
@@ -85,14 +77,15 @@ const CategoryEdit = () => {
         }
     };
 
-    const getEditCategory = async () => {
+    const getEditUnit = async () => {
         try {
             setIsLoadingData(true);
-            const res = await api.get(GET_EDIT_CATEGORY(id));
+            const res = await api.get(GET_EDIT_UNIT(id));
             const category = res.data.data;
             reset({
-                name: category.name,
-                description: category.description
+                actual_name: category.actual_name,
+                short_name: category.short_name,
+                allow_decimal: category.allow_decimal,
             });
         } catch (error) {
             toast({
@@ -109,15 +102,15 @@ const CategoryEdit = () => {
 
     useEffect(() => {
         const app_name = localStorage.getItem("app_name");
-        document.title = `${app_name} | Edit Category`;
-        getEditCategory();
+        document.title = `${app_name} | Edit Unit`;
+        getEditUnit();
     }, [id]);
 
     return (
         <Box bg="gray.50" minH="100vh" py={3}>
             {/* Container for max width and centering */}
             <Box mx="auto">
-                
+
                 {/* Modern Breadcrumb */}
                 <Card mb={4} bg="white" shadow="sm" borderRadius="lg" border="none">
                     <CardBody py={3}>
@@ -135,7 +128,7 @@ const CategoryEdit = () => {
                             <BreadcrumbItem>
                                 <BreadcrumbLink
                                     as={ReactRouterLink}
-                                    to={CATEGORY_LIST_PATH}
+                                    to={UNIT_LIST_PATH}
                                     fontWeight="medium"
                                     _hover={{ color: "teal.500" }}
                                 >
@@ -171,7 +164,7 @@ const CategoryEdit = () => {
                             <Button
                                 colorScheme="teal"
                                 as={ReactRouterLink}
-                                to={CATEGORY_LIST_PATH}
+                                to={UNIT_LIST_PATH}
                                 variant="outline"
                                 display={{ base: "none", md: "inline-flex" }}
                                 size="sm"
@@ -181,7 +174,7 @@ const CategoryEdit = () => {
                             </Button>
                         </Flex>
                     </CardHeader>
-                    
+
                     <CardBody p={8}>
                         {isLoadingData ? (
                             <Flex justify="center" align="center" h="40">
@@ -190,17 +183,17 @@ const CategoryEdit = () => {
                         ) : (
                             <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
-                                    <FormControl isRequired isInvalid={!!errors.name}>
-                                        <FormLabel 
-                                            fontSize="sm" 
-                                            fontWeight="semibold" 
+                                    <FormControl isRequired>
+                                        <FormLabel
+                                            fontSize="sm"
+                                            fontWeight="semibold"
                                             color="gray.700"
                                             mb={2}
                                         >
                                             {t("name")}
                                         </FormLabel>
                                         <Input
-                                            {...register("name", { required: true })}
+                                            {...register("actual_name", { required: true })}
                                             type="text"
                                             placeholder={t("name")}
                                             bg="gray.50"
@@ -214,19 +207,19 @@ const CategoryEdit = () => {
                                         />
                                     </FormControl>
 
-                                    <FormControl isRequired isInvalid={!!errors.description}>
-                                        <FormLabel 
-                                            fontSize="sm" 
+                                    <FormControl isRequired>
+                                        <FormLabel
+                                            fontSize="sm"
                                             fontWeight="semibold"
                                             color="gray.700"
                                             mb={2}
                                         >
-                                            {t("description")}
+                                            {t("short_name")}
                                         </FormLabel>
                                         <Input
-                                            {...register("description", { required: false })}
+                                            {...register("short_name", { required: true })}
                                             type="text"
-                                            placeholder={t("description")}
+                                            placeholder={t("short_name")}
                                             bg="gray.50"
                                             border="1px solid"
                                             borderColor="gray.200"
@@ -239,40 +232,31 @@ const CategoryEdit = () => {
                                     </FormControl>
 
                                     <FormControl>
-                                    <FormLabel 
-                                        fontSize="sm" 
-                                        fontWeight="semibold" 
-                                        color="gray.700"
-                                        mb={2}
-                                    >
-                                        {t("image")}
-                                    </FormLabel>
-                                    <Input
-                                        {...register("image", { required: false })}
-                                        type="file"
-                                        placeholder={t("image")}
-                                        bg="gray.50"
-                                        border="1px solid"
-                                        borderColor="gray.200"
-                                        borderRadius="md"
-                                        focusBorderColor="teal.500"
-                                        _hover={{ borderColor: "gray.300" }}
-                                        size="md"
-                                        transition="all 0.2s"
-                                    />
-                                </FormControl>
+                                        <FormLabel
+                                            fontSize="sm"
+                                            fontWeight="semibold"
+                                            color="gray.700"
+                                            mb={2}
+                                        >
+                                            {t("allow_decimal")}
+                                        </FormLabel>
+                                        <Select placeholder='Select option' {...register("allow_decimal", { required: true })}>
+                                            <option value='0'>No</option>
+                                            <option value='1'>Yes</option>
+                                        </Select>
+                                    </FormControl>
                                 </SimpleGrid>
 
                                 {/* Action Buttons */}
-                                <Flex 
-                                    mt={10} 
-                                    justify={{ base: "stretch", md: "flex-end" }} 
+                                <Flex
+                                    mt={10}
+                                    justify={{ base: "stretch", md: "flex-end" }}
                                     gap={4}
                                 >
                                     <Button
                                         type="button"
                                         as={ReactRouterLink}
-                                        to={CATEGORY_LIST_PATH}
+                                        to={UNIT_LIST_PATH}
                                         colorScheme="gray"
                                         variant="outline"
                                         fontWeight="semibold"
@@ -313,4 +297,4 @@ const CategoryEdit = () => {
     );
 };
 
-export default CategoryEdit;
+export default UnitEdit;

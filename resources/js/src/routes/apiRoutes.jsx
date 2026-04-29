@@ -52,8 +52,20 @@ export const DELETE_ITEM = (id) => `admin/products/${id}`;
 export const UPDATE_ITEM = (id) => `admin/products/${id}`;
 
 
-export const STORE_CATEGORY = 'admin/categories';
-export const LIST_CATEGORY = 'admin/categories';
-export const DELETE_CATEGORY = (id) => `admin/categories/${id}`;
-export const UPDATE_CATEGORY = (id) => `admin/categories/${id}`;
-export const GET_EDIT_CATEGORY = (id) => `admin/categories/${id}`;
+export const STORE_CATEGORY = '/admin/categories';
+export const LIST_CATEGORY = '/admin/categories';
+export const DELETE_CATEGORY = (id) => `/admin/categories/${id}`;
+export const UPDATE_CATEGORY = (id) => `/admin/categories/${id}`;
+export const GET_EDIT_CATEGORY = (id) => `/admin/categories/${id}`;
+
+export const STORE_UNIT = '/admin/units';
+export const LIST_UNIT = '/admin/units';
+export const DELETE_UNIT = (id) => `/admin/units/${id}`;
+export const UPDATE_UNIT = (id) => `/admin/units/${id}`;
+export const GET_EDIT_UNIT = (id) => `/admin/units/${id}`;
+
+export const STORE_ROLE = '/admin/roles';
+export const LIST_ROLE = '/admin/roles';
+export const DELETE_ROLE = (id) => `/admin/roles/${id}`;
+export const UPDATE_ROLE = (id) => `/admin/roles/${id}`;
+export const GET_EDIT_ROLE = (id) => `/admin/roles/${id}`;

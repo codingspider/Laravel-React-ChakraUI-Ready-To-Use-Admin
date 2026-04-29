@@ -13,9 +13,8 @@ class Category extends Model
     public function getImageUrlAttribute()
     {
         if (!$this->image) {
-            return null;
+            return asset('uploads/placeholder.png');
         }
-
-        return asset($this->image);
+        return asset($this->image) ?? asset('uploads/placeholder.png');
     }
 }

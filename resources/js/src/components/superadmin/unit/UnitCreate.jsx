@@ -16,6 +16,7 @@ import {
     useToast,
     Flex,
     Text,
+    Select,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
@@ -23,10 +24,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link as ReactRouterLink } from "react-router-dom";
 import api from "../../../axios";
-import { CATEGORY_LIST_PATH, SUPERADMIN_DASHBOARD_PATH } from "../../../routes/superAdminRoutes";
-import { STORE_CATEGORY } from "../../../routes/apiRoutes";
+import { SUPERADMIN_DASHBOARD_PATH, UNIT_LIST_PATH } from "../../../routes/superAdminRoutes";
+import { STORE_UNIT } from "../../../routes/apiRoutes";
 
-const CategoryCreate = () => {
+const UnitCreate = () => {
     const { register, handleSubmit, reset } = useForm();
     const { t } = useTranslation();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,17 +38,10 @@ const CategoryCreate = () => {
         setIsSubmitting(true);
         try {
             const formData = new FormData();
-            formData.append("name", data.name);
-            formData.append("description", data.description);
-            if (data.image?.[0] instanceof File) {
-                formData.append("image", data.image[0]);
-            }
-
-            const res = await api.post(STORE_CATEGORY, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            formData.append("actual_name", data.actual_name);
+            formData.append("short_name", data.short_name);
+            formData.append("allow_decimal", data.allow_decimal);
+            const res = await api.post(STORE_UNIT, formData);
             reset();
             toast({
                 position: "bottom-right",
@@ -56,7 +50,7 @@ const CategoryCreate = () => {
                 duration: 3000,
                 isClosable: true,
             });
-            navigate(`${CATEGORY_LIST_PATH}`);
+            navigate(`${UNIT_LIST_PATH}`);
         } catch (err) {
             const errorResponse = err?.response?.data;
             if (errorResponse?.errors) {
@@ -88,7 +82,7 @@ const CategoryCreate = () => {
 
     useEffect(() => {
         const app_name = localStorage.getItem("app_name");
-        document.title = `${app_name} | Category Management`;
+        document.title = `${app_name} | Unit Management`;
     }, []);
 
     return (
@@ -113,7 +107,7 @@ const CategoryCreate = () => {
                             <BreadcrumbItem>
                                 <BreadcrumbLink
                                     as={ReactRouterLink}
-                                    to={CATEGORY_LIST_PATH}
+                                    to={UNIT_LIST_PATH}
                                     fontWeight="medium"
                                     _hover={{ color: "teal.500" }}
                                 >
@@ -143,13 +137,13 @@ const CategoryCreate = () => {
                                     {t("add")}
                                 </Heading>
                                 <Text fontSize="sm" color="gray.500" mt={1}>
-                                    Create a new category for your platform
+                                    Create a new unit for your platform
                                 </Text>
                             </Box>
                             <Button
                                 colorScheme="teal"
                                 as={ReactRouterLink}
-                                to={CATEGORY_LIST_PATH}
+                                to={UNIT_LIST_PATH}
                                 variant="outline"
                                 display={{ base: "none", md: "inline-flex" }}
                                 size="sm"
@@ -173,7 +167,7 @@ const CategoryCreate = () => {
                                         {t("name")}
                                     </FormLabel>
                                     <Input
-                                        {...register("name", { required: true })}
+                                        {...register("actual_name", { required: true })}
                                         type="text"
                                         placeholder={t("name")}
                                         bg="gray.50"
@@ -187,19 +181,19 @@ const CategoryCreate = () => {
                                     />
                                 </FormControl>
 
-                                <FormControl>
+                                <FormControl isRequired>
                                     <FormLabel 
                                         fontSize="sm" 
                                         fontWeight="semibold"
                                         color="gray.700"
                                         mb={2}
                                     >
-                                        {t("description")}
+                                        {t("short_name")}
                                     </FormLabel>
                                     <Input
-                                        {...register("description", { required: false })}
+                                        {...register("short_name", { required: true })}
                                         type="text"
-                                        placeholder={t("description")}
+                                        placeholder={t("short_name")}
                                         bg="gray.50"
                                         border="1px solid"
                                         borderColor="gray.200"
@@ -218,21 +212,12 @@ const CategoryCreate = () => {
                                         color="gray.700"
                                         mb={2}
                                     >
-                                        {t("image")}
+                                        {t("allow_decimal")}
                                     </FormLabel>
-                                    <Input
-                                        {...register("image", { required: false })}
-                                        type="file"
-                                        placeholder={t("image")}
-                                        bg="gray.50"
-                                        border="1px solid"
-                                        borderColor="gray.200"
-                                        borderRadius="md"
-                                        focusBorderColor="teal.500"
-                                        _hover={{ borderColor: "gray.300" }}
-                                        size="md"
-                                        transition="all 0.2s"
-                                    />
+                                    <Select placeholder='Select option' {...register("allow_decimal", { required: true })}>
+                                        <option value='0'>No</option>
+                                        <option value='1'>Yes</option>
+                                    </Select>
                                 </FormControl>
                             </SimpleGrid>
 
@@ -245,7 +230,7 @@ const CategoryCreate = () => {
                                 <Button
                                     type="button"
                                     as={ReactRouterLink}
-                                    to={CATEGORY_LIST_PATH}
+                                    to={UNIT_LIST_PATH}
                                     colorScheme="gray"
                                     variant="outline"
                                     fontWeight="semibold"
@@ -285,4 +270,4 @@ const CategoryCreate = () => {
     );
 };
 
-export default CategoryCreate;
+export default UnitCreate;

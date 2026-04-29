@@ -1,6 +1,5 @@
 <?php 
 
-use App\Models\Branch;
 use App\Models\ActivityLog;
 
 function getCurrencies(){
@@ -601,38 +600,38 @@ function createdBy()
     return auth()->check() ? auth()->id() : null;
 }
 
+function user_business_id()
+{
+    return auth()->user()->business_id ?? null;
+}
+
+function user_full_name()
+{
+    $name = auth()->user()->first_name.' '.auth()->user()->last_name;
+    return $name;
+}
+
 function activityLog($module, $action, $description)
 {
     $user = auth()->user();
 
     ActivityLog::create([
-        'user_id'     => $user ? $user->id : null,
-        'module'      => $module,
-        'action'      => $action,
-        'description' => $description
+        'causer_id'     => $user ? $user->id : null,
+        'log_name'      => $module,
+        'causer_type'      => $action,
+        'description' => $description,
+        'business_id' => user_business_id(),
     ]);
 }
 
-
-function getBranchIds()
-{
-    $user = auth()->user();
-
-    // If no user, return empty array
-    if (!$user) {
-        return [];
-    }
-
-    // if user is admin → return all branch IDs of same business
-    if ($user->role === 'admin') {
-        return Branch::where('business_id', $user->business_id) ->pluck('id')->toArray();
-    }
-
-    return [$user->branch_id];
-}
 
 function payment_types()
 {
     $payment_types = ['cash' => 'Cash', 'card' => 'Card', 'cheque' => 'Check', 'bank_transfer' => 'Bank Transfer', 'other' => 'Other'];
     return $payment_types;
+}
+
+function dataShowingNumber(){
+    $number = 10;
+    return $number;
 }

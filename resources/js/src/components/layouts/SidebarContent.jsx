@@ -11,7 +11,7 @@ import {
     ChevronsLeft, ChevronRight,
     Package
 } from 'lucide-react';
-import { CATEGORY_LIST_PATH, SUPERADMIN_DASHBOARD_PATH, USER_LIST_PATH } from '../../routes/superAdminRoutes';
+import { CATEGORY_LIST_PATH, ROLE_LIST_PATH, SUPERADMIN_DASHBOARD_PATH, UNIT_LIST_PATH, USER_LIST_PATH } from '../../routes/superAdminRoutes';
 import { usePermission } from '../../context/PermissionContext';
 
 const navItems = [
@@ -26,7 +26,7 @@ const navItems = [
         label: 'User Management',
         children: [
             { path: USER_LIST_PATH, label: 'All Users', permission: 'view_user' },
-            { path: '/roles', label: 'Roles & Permissions', permission: 'roles.view' },
+            { path: ROLE_LIST_PATH, label: 'Roles', permission: 'roles.view' },
             { path: '/teams', label: 'Teams', permission: 'manage teams' }
         ]
     },
@@ -36,7 +36,7 @@ const navItems = [
         children: [
             { path: '/products', label: 'Products', permission: 'view_product' },
             { path: CATEGORY_LIST_PATH, label: 'Category', permission: 'view_category' },
-            { path: '/inventory', label: 'Inventory', permission: 'manage inventory' }
+            { path: UNIT_LIST_PATH, label: 'Unit', permission: 'view_unit' }
         ]
     },
     { path: '/analytics', icon: TrendingUp, label: 'Analytics', permission: 'view analytics' },

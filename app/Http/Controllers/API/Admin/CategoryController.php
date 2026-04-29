@@ -17,14 +17,15 @@ class CategoryController extends BaseController
     public function index(Request $request)
     {
         try {
-            $categories = Category::select('id','name','image','order_number')
-            ->orderBy('order_number')
-            ->paginate(10)
+            $categories = Category::select('id','name','image','description')
+            ->where('business_id', user_business_id())
+            ->orderBy('id', 'desc')
+            ->paginate(dataShowingNumber())
             ->through(function ($cat) {
                 return [
                     'id' => $cat->id,
                     'name' => $cat->name,
-                    'order_number' => $cat->order_number,
+                    'description' => $cat->description,
                     'image' => $cat->image_url,
                 ];
             });
@@ -70,8 +71,8 @@ class CategoryController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name'           => 'required|string|max:255',
-            'order_number'  => 'required',
-            'image'  => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048'
+            'description'  => 'nullable',
+            'image' => 'sometimes|image|mimes:jpg,png,jpeg|max:2048'
         ]);
 
         if ($validator->fails()) {
@@ -82,7 +83,8 @@ class CategoryController extends BaseController
         try {
             $category = new Category();
             $category->name = $request->name;
-            $category->order_number = $request->order_number;
+            $category->description = $request->description;
+            $category->business_id = user_business_id();
             $category->created_by = createdBy();
 
             if ($request->hasFile('image')) {
@@ -93,7 +95,8 @@ class CategoryController extends BaseController
                 );
             }
             $category->save();
-            activityLog('category','create','User '.auth()->user()->name.' created category '.$category->name);
+
+            activityLog('category', 'create', 'User '.user_full_name().' created category '.$category->name);
 
             DB::commit();
             return $this->sendResponse($category, 'Category saved successfully.');
@@ -110,8 +113,8 @@ class CategoryController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name'           => 'required|string|max:255',
-            'order_number'  => 'required',
-            'image'         => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048'
+            'description'  => 'nullable',
+            'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
         ]);
 
         if ($validator->fails()) {
@@ -121,7 +124,7 @@ class CategoryController extends BaseController
         DB::beginTransaction();
         try {
             $category->name = $request->name;
-            $category->order_number = $request->order_number;
+            $category->description = $request->description;
 
             if ($request->hasFile('image')) {
                 $category->image = uploadImage(
@@ -131,7 +134,7 @@ class CategoryController extends BaseController
                 );
             }
             $category->save();
-            activityLog('category','update','User '.auth()->user()->name.' updated category '.$category->name);
+            activityLog('category','update','User '.user_full_name().' updated category '.$category->name);
 
             DB::commit();
             return $this->sendResponse($category, 'Category updated successfully.');
@@ -149,8 +152,8 @@ class CategoryController extends BaseController
         try {
             $category = Category::find($id);
             $category->delete();
-            activityLog('category','deleted','User '.auth()->user()->name.' deleted category '.$category->name);
-            return $this->sendResponse([], 'Data deleted successfully.');
+            activityLog('category','deleted','User '.user_full_name().' deleted category '.$category->name);
+            return $this->sendResponse([], 'Category deleted successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Server Error: ' . $e->getMessage(), 500);
         }

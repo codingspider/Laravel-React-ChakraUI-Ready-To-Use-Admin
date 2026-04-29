@@ -21,11 +21,10 @@ import { Link as ReactRouterLink } from "react-router-dom";
 import api from "../../../axios";
 import TanStackTable from "../../../TanStackTable";
 import { useCurrencyFormatter } from './../../../useCurrencyFormatter';
-import { DELETE_CATEGORY, LIST_CATEGORY } from "../../../routes/apiRoutes";
-import { CATEGORY_ADD_PATH, CATEGORY_EDIT_PATH, SUPERADMIN_DASHBOARD_PATH } from "../../../routes/superAdminRoutes";
+import { ROLE_ADD_PATH, ROLE_EDIT_PATH, SUPERADMIN_DASHBOARD_PATH} from './../../../routes/superAdminRoutes';
+import { DELETE_ROLE, LIST_ROLE } from "../../../routes/apiRoutes";
 
-
-export default function CategoryList() {
+export default function List() {
     const [globalFilter, setGlobalFilter] = useState("");
     const [data, setData] = useState([]);
     const [pageIndex, setPageIndex] = useState(0);
@@ -38,10 +37,10 @@ export default function CategoryList() {
     const { formatAmount, currency } = useCurrencyFormatter();
 
     // Fetch data whenever page or search changes
-    const fetchCategories = async () => {
+    const fetchRole = async () => {
         try {
             setIsLoading(true);
-            const res = await api.get(LIST_CATEGORY, {
+            const res = await api.get(LIST_ROLE, {
                 params: {
                     page: pageIndex + 1,
                     per_page: pageSize,
@@ -56,7 +55,7 @@ export default function CategoryList() {
             setData(bottles);
             setPageCount(Math.ceil(total / pageSize));
         } catch (err) {
-            console.error("fetchCategories error:", err);
+            console.error("fetchRole error:", err);
         } finally {
             setIsLoading(false);
         }
@@ -64,11 +63,11 @@ export default function CategoryList() {
 
     useEffect(() => {
         const app_name = localStorage.getItem('app_name');
-        document.title = `${app_name} | Category Management`;
-        fetchCategories();
+        document.title = `${app_name} | Permission Management`;
+        fetchRole();
     }, [pageIndex, globalFilter]);
 
-    const deleteCategory = async (id) => {
+    const deleteRole = async (id) => {
         const result = await Swal.fire({
             title: "Are you sure?",
             text: "Data will be deleted.",
@@ -81,7 +80,7 @@ export default function CategoryList() {
 
         if (result.isConfirmed) {
             try {
-                await api.delete(DELETE_CATEGORY(id));
+                await api.delete(DELETE_ROLE(id));
                 toast({
                     position: "bottom-right",
                     title: "Data deleted successfully",
@@ -90,8 +89,9 @@ export default function CategoryList() {
                     isClosable: true,
                 });
 
-                fetchCategories();
+                fetchRole();
             } catch (error) {
+                console.log(error);
                 toast({
                     position: "bottom-right",
                     title: "Error deleting data",
@@ -108,21 +108,7 @@ export default function CategoryList() {
 
     const columns = [
         { header: t("sl"), cell: ({ row }) => row.index + 1},
-        {
-            header: t('image'),
-            accessorKey: 'image',
-            cell: ({ row }) => (
-                <Image
-                src={row.original.image}
-                alt="category"
-                boxSize="30px"
-                objectFit="cover"
-                borderRadius="md"
-                />
-            ),
-        },
         { header: t('name'), accessorKey: "name"},
-        { header: t('description'), accessorKey: "description"},
         {
             header: "Actions",
             cell: ({ row }) => (
@@ -133,7 +119,7 @@ export default function CategoryList() {
                             padding={2}
                             borderRadius="md"
                             onClick={() =>
-                                navigate(CATEGORY_EDIT_PATH(row.original.id))
+                                navigate(ROLE_EDIT_PATH(row.original.id))
                             }
                         >
                             <EditIcon />
@@ -144,7 +130,7 @@ export default function CategoryList() {
                             padding={2}
                             borderRadius="md"
                             cursor="pointer"
-                            onClick={() => deleteCategory(row.original.id)}
+                            onClick={() => deleteRole(row.original.id)}
                         >
                             <DeleteIcon color="red.500" />
                         </ChakraLink>
@@ -171,7 +157,7 @@ export default function CategoryList() {
                         <BreadcrumbItem isCurrentPage>
                             <BreadcrumbLink
                                 as={ReactRouterLink}
-                                to={CATEGORY_ADD_PATH}
+                                to={ROLE_ADD_PATH}
                             >
                                 {t("add")}
                             </BreadcrumbLink>
@@ -193,7 +179,7 @@ export default function CategoryList() {
                             setPageIndex={setPageIndex}
                             pageCount={pageCount}
                             isLoading={isLoading}
-                            addURL={CATEGORY_ADD_PATH}
+                            addURL={ROLE_ADD_PATH}
                         />
                     </CardBody>
                 </Card>
